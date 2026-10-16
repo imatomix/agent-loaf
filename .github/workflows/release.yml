@@ -25,7 +25,7 @@ jobs:
         working-directory: app
       - name: 同梱する hook を作る
         run: ./scripts/build-hook-sidecar.sh
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AGENT_LOAF_RELEASE: "1"

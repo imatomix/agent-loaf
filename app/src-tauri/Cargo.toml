@@ -15,7 +15,7 @@ tauri = { version = "2", features = ["tray-icon", "macos-private-api", "image-pn
 tauri-plugin-autostart = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-updater = "2"
-dirs = "6"
+dirs = "7"
 tauri-plugin-positioner = { version = "2", features = ["tray-icon"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]

@@ -1,0 +1,12 @@
+[package]
+name = "agent-loaf-hook"
+version.workspace = true
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+agent-loaf-core = { path = "../core" }
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"

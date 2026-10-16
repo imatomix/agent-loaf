@@ -1,0 +1,168 @@
+use crate::messages::{self, Lang, Msg};
+use crate::state::{DetailKind, Status};
+use crate::store::StatusChange;
+use crate::view::{detail_label, status_label};
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Notice {
+    pub session_id: String,
+    pub title: String,
+    pub body: String,
+}
+
+pub fn notice_for(change: &StatusChange, notify_on: &[Status], lang: Lang) -> Option<Notice> {
+    // 現れたばかりのセッション（from が None）は、何かが終わったり止まったりしたわけではない
+    if change.from.is_none() || change.from == Some(change.to) || !notify_on.contains(&change.to) {
+        return None;
+    }
+    let (headline, body) = match (change.to, change.detail_kind) {
+        // 要対応は「何を待っているか」が見出しで、ツールの中身は本文に回す
+        (Status::NeedsAction, Some(kind)) if kind != DetailKind::Tool => (
+            detail_label(lang, Some(kind), None).unwrap_or_default(),
+            change.detail_text.clone().unwrap_or_default(),
+        ),
+        (status, kind) => (
+            status_label(lang, status),
+            detail_label(lang, kind, change.detail_text.as_deref()).unwrap_or_default(),
+        ),
+    };
+    let title = messages::format(
+        lang,
+        Msg::NoticeTitle,
+        &[("project", &change.project), ("headline", &headline)],
+    );
+    Some(Notice {
+        session_id: change.session_id.clone(),
+        title,
+        body,
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::messages::Lang;
+    use crate::state::DetailKind;
+
+    fn change(from: Option<Status>, to: Status, kind: Option<DetailKind>, text: Option<&str>) -> StatusChange {
+        StatusChange {
+            config_dir: String::new(),
+            session_id: "s1".into(),
+            project: "my-api".into(),
+            from,
+            to,
+            detail_kind: kind,
+            detail_text: text.map(str::to_string),
+            ts_ms: 1,
+        }
+    }
+
+    const DEFAULT: [Status; 2] = [Status::NeedsAction, Status::Error];
+
+    #[test]
+    fn permission_notice_splits_title_and_body() {
+        let c = change(
+            Some(Status::Running),
+            Status::NeedsAction,
+            Some(DetailKind::Permission),
+            Some("Bash: rm -rf dist"),
+        );
+        assert_eq!(
+            notice_for(&c, &DEFAULT, Lang::Ja).unwrap(),
+            Notice {
+                session_id: "s1".into(),
+                title: "my-api — 許可待ち".into(),
+                body: "Bash: rm -rf dist".into()
+            }
+        );
+        assert_eq!(
+            notice_for(&c, &DEFAULT, Lang::En).unwrap(),
+            Notice {
+                session_id: "s1".into(),
+                title: "my-api — Waiting for permission".into(),
+                body: "Bash: rm -rf dist".into()
+            }
+        );
+    }
+
+    #[test]
+    fn question_notice_without_body() {
+        let c = change(
+            Some(Status::Running),
+            Status::NeedsAction,
+            Some(DetailKind::Question),
+            None,
+        );
+        assert_eq!(
+            notice_for(&c, &DEFAULT, Lang::Ja).unwrap(),
+            Notice {
+                session_id: "s1".into(),
+                title: "my-api — 質問待ち".into(),
+                body: String::new()
+            }
+        );
+    }
+
+    #[test]
+    fn error_notice_uses_status_label() {
+        let c = change(
+            Some(Status::Running),
+            Status::Error,
+            Some(DetailKind::Error),
+            Some("rate_limit"),
+        );
+        assert_eq!(
+            notice_for(&c, &DEFAULT, Lang::En).unwrap(),
+            Notice {
+                session_id: "s1".into(),
+                title: "my-api — Error".into(),
+                body: "rate_limit".into()
+            }
+        );
+        assert_eq!(
+            notice_for(&c, &DEFAULT, Lang::Ja).unwrap(),
+            Notice {
+                session_id: "s1".into(),
+                title: "my-api — エラー停止".into(),
+                body: "rate_limit".into()
+            }
+        );
+    }
+
+    #[test]
+    fn no_notice_when_a_session_just_appears() {
+        assert!(notice_for(
+            &change(None, Status::Done, Some(DetailKind::New), None),
+            &[Status::Done],
+            Lang::Ja
+        )
+        .is_none());
+    }
+
+    #[test]
+    fn no_notice_when_status_unchanged_or_not_selected() {
+        assert!(notice_for(
+            &change(
+                Some(Status::NeedsAction),
+                Status::NeedsAction,
+                Some(DetailKind::Permission),
+                None
+            ),
+            &DEFAULT,
+            Lang::Ja
+        )
+        .is_none());
+        assert!(notice_for(
+            &change(Some(Status::Running), Status::Done, None, None),
+            &DEFAULT,
+            Lang::Ja
+        )
+        .is_none());
+        assert!(notice_for(
+            &change(Some(Status::Running), Status::Done, None, None),
+            &[Status::Done],
+            Lang::Ja
+        )
+        .is_some());
+    }
+}

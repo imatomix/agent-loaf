@@ -1,0 +1,25 @@
+# 個人で見るので月ごとにし、小さな更新は 1 つの Pull Request にまとめる。
+# Tauri は Rust（tauri）と npm（@tauri-apps/*）で版をそろえる必要があるが、Dependabot は別々に出す。
+# 片方だけの Pull Request は、もう片方を上げてから一緒にマージする
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/app"
+    schedule:
+      interval: "monthly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"

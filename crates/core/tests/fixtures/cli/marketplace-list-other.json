@@ -1,0 +1,14 @@
+[
+  {
+    "name": "agent-loaf",
+    "source": "directory",
+    "path": "/Users/tester/Projects/agent-loaf",
+    "installLocation": "/Users/tester/Projects/agent-loaf"
+  },
+  {
+    "name": "claude-plugins-official",
+    "source": "github",
+    "repo": "anthropics/claude-plugins-official",
+    "installLocation": "/Users/tester/.claude-personal/plugins/marketplaces/claude-plugins-official"
+  }
+]

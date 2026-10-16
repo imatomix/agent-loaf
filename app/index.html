@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Agent Loaf</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="panel" class="panel">
+      <header class="tab-bar">
+        <nav class="tabs">
+          <button class="tab selected" type="button" data-page="agents">Agents</button>
+          <button class="tab" type="button" data-page="unknown" hidden>Unknown</button>
+        </nav>
+        <button class="tab icon-tab" type="button" data-page="menu" data-i18n-title="tab.menu">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M2 4.66667V3.33333H14V4.66667H2ZM2 12.6667V11.3333H14V12.6667H2ZM2 8.66667V7.33333H14V8.66667H2Z" />
+          </svg>
+          <span id="settings-badge" class="badge" hidden></span>
+        </button>
+      </header>
+      <ul id="sessions" class="sessions"></ul>
+      <section id="menu" class="menu" hidden>
+        <div class="menu-section">
+          <h2 class="menu-heading" data-i18n="settings.notifications"></h2>
+          <div id="notify-off" class="menu-item" hidden>
+            <span class="grow secondary" data-i18n="settings.notifications_off"></span>
+            <button id="open-notification-settings" class="icon-button" type="button" data-i18n-title="settings.open_system_settings"></button>
+          </div>
+          <div id="notify-options"></div>
+        </div>
+        <div class="menu-section">
+          <h2 class="menu-heading" data-i18n="settings.claude_configs"></h2>
+          <p id="config-dirs-empty" class="menu-note" hidden data-i18n="settings.no_config_dirs"></p>
+          <ul id="config-dirs" class="config-dirs"></ul>
+          <form id="claude-path-form" class="claude-path" hidden>
+            <p class="menu-note" data-i18n="settings.claude_not_found"></p>
+            <input id="claude-path" class="text-input" type="text" placeholder="/Users/you/.local/bin/claude" />
+          </form>
+          <form id="codex-path-form" class="claude-path" hidden>
+            <p class="menu-note" data-i18n="settings.codex_not_found"></p>
+            <input id="codex-path" class="text-input" type="text" placeholder="/opt/homebrew/bin/codex" />
+          </form>
+          <button id="add-config-dir" class="menu-item centered" type="button" data-i18n="settings.add_config_dir"></button>
+          <p id="setup-error" class="menu-note" hidden></p>
+        </div>
+        <div id="update-section" class="menu-section" hidden>
+          <h2 class="menu-heading" data-i18n="settings.update"></h2>
+          <div class="update-status">
+            <img src="/src/assets/loaf.svg" alt="" />
+            <p id="update-note" class="update-note"></p>
+          </div>
+          <button id="update-action" class="menu-item centered" type="button" hidden></button>
+        </div>
+        <div id="version-section" class="menu-section version-section" hidden>
+          <img src="/src/assets/loaf.svg" alt="" />
+          <p id="app-version" class="app-version"></p>
+        </div>
+        <div class="menu-section">
+          <label class="menu-item"><input id="launch-at-login" class="checkbox" type="checkbox" /><span data-i18n="settings.launch_at_login"></span></label>
+          <button id="quit" class="menu-item" type="button">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M7.525 7.80833C7.39722 7.68056 7.33333 7.52222 7.33333 7.33333V2C7.33333 1.81111 7.39722 1.65278 7.525 1.525C7.65278 1.39722 7.81111 1.33333 8 1.33333C8.18889 1.33333 8.34722 1.39722 8.475 1.525C8.60278 1.65278 8.66667 1.81111 8.66667 2V7.33333C8.66667 7.52222 8.60278 7.68056 8.475 7.80833C8.34722 7.93611 8.18889 8 8 8C7.81111 8 7.65278 7.93611 7.525 7.80833ZM5.65833 13.525C4.93056 13.2083 4.29722 12.7806 3.75833 12.2417C3.21944 11.7028 2.79167 11.0694 2.475 10.3417C2.15833 9.61389 2 8.83333 2 8C2 7.32222 2.11111 6.66389 2.33333 6.025C2.55556 5.38611 2.87778 4.8 3.3 4.26667C3.42222 4.11111 3.57778 4.03611 3.76667 4.04167C3.95556 4.04722 4.12222 4.12222 4.26667 4.26667C4.38889 4.38889 4.44444 4.53889 4.43333 4.71667C4.42222 4.89444 4.36111 5.06111 4.25 5.21667C3.95 5.61667 3.72222 6.05556 3.56667 6.53333C3.41111 7.01111 3.33333 7.5 3.33333 8C3.33333 9.3 3.78611 10.4028 4.69167 11.3083C5.59722 12.2139 6.7 12.6667 8 12.6667C9.3 12.6667 10.4028 12.2139 11.3083 11.3083C12.2139 10.4028 12.6667 9.3 12.6667 8C12.6667 7.48889 12.5917 6.99167 12.4417 6.50833C12.2917 6.025 12.0556 5.58333 11.7333 5.18333C11.6222 5.03889 11.5611 4.88056 11.55 4.70833C11.5389 4.53611 11.5944 4.38889 11.7167 4.26667C11.85 4.13333 12.0111 4.06389 12.2 4.05833C12.3889 4.05278 12.5444 4.12222 12.6667 4.26667C13.1 4.8 13.4306 5.38333 13.6583 6.01667C13.8861 6.65 14 7.31111 14 8C14 8.83333 13.8417 9.61389 13.525 10.3417C13.2083 11.0694 12.7806 11.7028 12.2417 12.2417C11.7028 12.7806 11.0694 13.2083 10.3417 13.525C9.61389 13.8417 8.83333 14 8 14C7.16667 14 6.38611 13.8417 5.65833 13.525Z" />
+            </svg>
+            <span data-i18n="settings.quit"></span>
+          </button>
+          <p id="settings-error" class="error-text" hidden></p>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/list.ts"></script>
+  </body>
+</html>

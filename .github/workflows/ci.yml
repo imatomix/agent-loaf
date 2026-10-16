@@ -1,0 +1,39 @@
+name: ci
+
+# Secrets を使わないので、ほかの人の Pull Request でも動かしてよい
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # プロセスを読む部分が macOS 専用のため
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: 整形
+        run: cargo fmt --all --check
+      # Tauri のビルドは同梱する hook の本体を要るので、clippy とテストより前に作る
+      - name: 同梱する hook を作る
+        run: ./scripts/build-hook-sidecar.sh
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: テスト
+        run: cargo test --workspace
+      - run: npm ci
+        working-directory: app
+      - name: 型チェック
+        run: npx tsc --noEmit
+        working-directory: app

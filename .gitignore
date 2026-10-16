@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+
+# エディタ・作業メモ
+.vscode/
+.superpowers/
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/local/
+.claude/worktrees/
+# デザインの元のファイル（Illustrator など）。公開しない
+/design/
+
+# Rust
+/target/
+
+# フロントエンド
+/app/node_modules/
+/app/dist/
+
+# Tauri（生成物・サイドカーのビルド成果物）
+/app/src-tauri/gen/
+/app/src-tauri/binaries/

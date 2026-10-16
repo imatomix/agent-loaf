@@ -1,0 +1,11 @@
+{
+  "name": "agent-loaf",
+  "owner": { "name": "imatomix" },
+  "plugins": [
+    {
+      "name": "agent-loaf",
+      "description": "Hooks that report Claude Code session status to the Agent Loaf menu bar app",
+      "source": "./plugin"
+    }
+  ]
+}

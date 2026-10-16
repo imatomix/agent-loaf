@@ -1,0 +1,8 @@
+[
+  {
+    "name": "agent-loaf",
+    "source": "directory",
+    "path": "/Users/tester/.agent-loaf/marketplace",
+    "installLocation": "/Users/tester/.agent-loaf/marketplace"
+  }
+]

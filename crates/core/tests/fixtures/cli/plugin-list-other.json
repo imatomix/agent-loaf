@@ -1,0 +1,24 @@
+[
+  {
+    "id": "agent-loaf@agent-loaf",
+    "version": "0.1.0",
+    "scope": "user",
+    "enabled": true,
+    "installPath": "/Users/tester/.claude-personal/plugins/cache/agent-loaf/agent-loaf/0.1.0",
+    "readFromFolder": "/Users/tester/Projects/agent-loaf/plugin",
+    "folderVersion": "0.1.0",
+    "installedAt": "2026-10-08T23:27:56.373Z",
+    "lastUpdated": "2026-10-08T23:27:56.373Z",
+    "projectEnabled": false
+  },
+  {
+    "id": "superpowers@claude-plugins-official",
+    "version": "6.4.1",
+    "scope": "user",
+    "enabled": true,
+    "installPath": "/Users/tester/.claude-personal/plugins/cache/claude-plugins-official/superpowers/6.4.1",
+    "installedAt": "2026-10-08T14:51:46.925Z",
+    "lastUpdated": "2026-10-08T14:51:46.925Z",
+    "projectEnabled": false
+  }
+]

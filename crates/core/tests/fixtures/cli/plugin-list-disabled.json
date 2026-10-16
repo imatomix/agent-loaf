@@ -1,0 +1,14 @@
+[
+  {
+    "id": "agent-loaf@agent-loaf",
+    "version": "0.1.2",
+    "scope": "user",
+    "enabled": false,
+    "installPath": "/Users/tester/.claude-test/plugins/cache/agent-loaf/agent-loaf/0.1.2",
+    "readFromFolder": "/Users/tester/.agent-loaf/marketplace/plugin",
+    "folderVersion": "0.1.2",
+    "installedAt": "2026-10-11T04:08:16.160Z",
+    "lastUpdated": "2026-10-11T04:08:33.374Z",
+    "projectEnabled": false
+  }
+]

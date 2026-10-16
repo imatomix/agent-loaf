@@ -1,0 +1,72 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cargo test)",
+      "Bash(cargo test *)",
+      "Bash(cargo build)",
+      "Bash(cargo build *)",
+      "Bash(cargo clippy)",
+      "Bash(cargo clippy *)",
+      "Bash(cargo fmt)",
+      "Bash(cargo fmt *)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npm run build)",
+      "Bash(./scripts/build-hook-sidecar.sh)",
+      "Bash(./scripts/check.sh)",
+      "Bash(git status)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log)",
+      "Bash(git log *)"
+    ],
+    "ask": [
+      "Bash(git push)",
+      "Bash(git push *)"
+    ],
+    "deny": [
+      "Read(~/.appkeys/**)",
+      "Bash(*.appkeys*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(git checkout -- *)",
+      "Bash(git restore *)",
+      "Bash(git branch -D*)",
+      "Bash(git rebase -i*)",
+      "Bash(rm -rf *)"
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(gh pr create*)",
+            "command": "log=\"${TMPDIR:-/tmp}/agent-loaf-check.log\"; \"$CLAUDE_PROJECT_DIR/scripts/check.sh\" >\"$log\" 2>&1 && exit 0; echo \"Pull Request の前の確認（整形・clippy・テスト・型チェック）が通りませんでした。直してから作ってください。全体は $log にあります。\" >&2; tail -20 \"$log\" >&2; exit 2",
+            "timeout": 900,
+            "statusMessage": "Pull Request の前の確認（整形・clippy・テスト・型チェック）を動かしています"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty' 2>/dev/null); [ -n \"$CLAUDE_PROJECT_DIR\" ] && case \"$f\" in \"$CLAUDE_PROJECT_DIR\"/*.rs) rustfmt \"$f\" >/dev/null 2>&1 ;; esac; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}

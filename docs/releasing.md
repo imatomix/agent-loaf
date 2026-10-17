@@ -87,7 +87,15 @@ Agent Loaf の新しい版を、署名・公証した dmg として GitHub の R
 
     `check` は CI のジョブの名前。`enforce_admins` を `false` にして、メンテナーが手元でマージした `main` を push できるようにしておく
 16. Settings → Advanced Security で、Dependabot alerts と Dependabot security updates を有効にする。`.github/dependabot.yml` は版の更新を知らせるだけで、脆弱性の知らせはこれを有効にしないと届かない。gh の通常の権限では変えられないので、ブラウザで行う
-17. ログインしていない状態で、自動更新の情報と dmg が取れることを確かめる: `curl -sL https://github.com/imatomix/agent-loaf/releases/latest/download/latest.json`
+17. Secret scanning と Push protection を有効にする。鍵やパスワードがコミットに入ったときに知らせ、それを含む push を GitHub の側で止める。公開のリポジトリなら無料
+
+    ```bash
+    gh api -X PATCH repos/imatomix/agent-loaf --input - <<'JSON'
+    {"security_and_analysis":{"secret_scanning":{"status":"enabled"},"secret_scanning_push_protection":{"status":"enabled"}}}
+    JSON
+    ```
+
+18. ログインしていない状態で、自動更新の情報と dmg が取れることを確かめる: `curl -sL https://github.com/imatomix/agent-loaf/releases/latest/download/latest.json`
 
 Dependabot は、`.github/dependabot.yml` を push した直後に一度動き、`main` の依存が変わるたびに調べ直す。最初の公開の前に届いた Pull Request は、公開した版には入れず、次の版のために `main` に入れる。
 

@@ -77,15 +77,32 @@ Agent Loaf の新しい版を、署名・公証した dmg として GitHub の R
 
 13. 下書きに変更点を書き、公開済みにする: `gh release edit v0.5.0 --notes-file <説明文のファイル> --draft=false --latest`。リポジトリが非公開の間は、見えるのはメンテナーだけ。説明文の見え方をここで確かめる
 14. リポジトリを公開にする: `gh repo edit imatomix/agent-loaf --visibility public --accept-visibility-change-consequences`
-15. `main` に、CI が通らないと Pull Request をマージできない決まりを付ける。無料のアカウントでは非公開のリポジトリに付けられないので、公開にした後に行う
+15. ルールセットで `main` と公開のタグを守り、マージのやり方をそろえる。無料のアカウントでは非公開のリポジトリに付けられないので、公開にした後に行う
+    - `main`: Pull Request を必須（承認は 0。一人では自分の Pull Request を承認できない）、CI（`check`）の必須、一直線の履歴、強制の push と削除の禁止。マージは rebase だけ
+    - `v*` のタグ: 削除と付け替えの禁止
+    - どちらも、リポジトリの管理者（`RepositoryRole` の 5）は飛ばせる。文書だけの変更を `main` に直接 push するためと、「うまくいかないとき」のタグの付け直しのため
 
     ```bash
-    gh api -X PUT repos/imatomix/agent-loaf/branches/main/protection --input - <<'JSON'
-    {"required_status_checks":{"strict":true,"contexts":["check"]},"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null}
+    gh api -X POST repos/imatomix/agent-loaf/rulesets --input - <<'JSON'
+    {"name":"main","target":"branch","enforcement":"active",
+     "conditions":{"ref_name":{"include":["~DEFAULT_BRANCH"],"exclude":[]}},
+     "bypass_actors":[{"actor_id":5,"actor_type":"RepositoryRole","bypass_mode":"always"}],
+     "rules":[
+      {"type":"deletion"},{"type":"non_fast_forward"},{"type":"required_linear_history"},
+      {"type":"pull_request","parameters":{"required_approving_review_count":0,"dismiss_stale_reviews_on_push":false,"require_code_owner_review":false,"require_last_push_approval":false,"required_review_thread_resolution":false,"allowed_merge_methods":["rebase"]}},
+      {"type":"required_status_checks","parameters":{"strict_required_status_checks_policy":true,"do_not_enforce_on_create":false,"required_status_checks":[{"context":"check"}]}}
+     ]}
     JSON
+    gh api -X POST repos/imatomix/agent-loaf/rulesets --input - <<'JSON'
+    {"name":"release-tags","target":"tag","enforcement":"active",
+     "conditions":{"ref_name":{"include":["refs/tags/v*"],"exclude":[]}},
+     "bypass_actors":[{"actor_id":5,"actor_type":"RepositoryRole","bypass_mode":"always"}],
+     "rules":[{"type":"deletion"},{"type":"non_fast_forward"},{"type":"update"}]}
+    JSON
+    gh api -X PATCH repos/imatomix/agent-loaf -F allow_merge_commit=false -F allow_squash_merge=false -F allow_rebase_merge=true -F delete_branch_on_merge=true
     ```
 
-    `check` は CI のジョブの名前。`enforce_admins` を `false` にして、メンテナーが手元でマージした `main` を push できるようにしておく
+    `check` は CI のジョブの名前。古い「Branch protection rules」は使わない（ルールセットと両方が効いて、分かりにくくなる）
 16. Settings → Advanced Security で、Dependabot alerts と Dependabot security updates を有効にする。`.github/dependabot.yml` は版の更新を知らせるだけで、脆弱性の知らせはこれを有効にしないと届かない。gh の通常の権限では変えられないので、ブラウザで行う
 17. Secret scanning と Push protection を有効にする。鍵やパスワードがコミットに入ったときに知らせ、それを含む push を GitHub の側で止める。公開のリポジトリなら無料
 

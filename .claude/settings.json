@@ -54,7 +54,7 @@
           {
             "type": "command",
             "if": "Bash(gh pr create*)",
-            "command": "log=\"${TMPDIR:-/tmp}/agent-loaf-check.log\"; \"$CLAUDE_PROJECT_DIR/scripts/check.sh\" >\"$log\" 2>&1 && exit 0; echo \"Pull Request の前の確認（整形・clippy・テスト・型チェック）が通りませんでした。直してから作ってください。全体は $log にあります。\" >&2; tail -20 \"$log\" >&2; exit 2",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-before-pr.sh\"",
             "timeout": 900,
             "statusMessage": "Pull Request の前の確認（整形・clippy・テスト・型チェック）を動かしています"
           },

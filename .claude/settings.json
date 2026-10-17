@@ -36,7 +36,11 @@
       "Bash(git restore *)",
       "Bash(git branch -D*)",
       "Bash(git rebase -i*)",
-      "Bash(rm -rf *)"
+      "Bash(rm -rf *)",
+      "Edit(~/.claude*/settings*.json)",
+      "Edit(~/.claude*/plugins/**)",
+      "Edit(~/.claude.json)",
+      "Edit(~/.codex/**)"
     ]
   },
   "enabledPlugins": {

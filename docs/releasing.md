@@ -138,7 +138,7 @@ dmg 自体は署名だけで、公証はされない（Tauri が公証するの�
 4. `gh run watch` で GitHub Actions を見届ける
 5. Releases の下書きを開き、次がそろっていることを確かめる
    - `Agent.Loaf_<版>_aarch64.dmg`
-   - `Agent.Loaf_aarch64.app.tar.gz` と `Agent.Loaf_aarch64.app.tar.gz.sig`
+   - `Agent.Loaf_<版>_aarch64.app.tar.gz` と `Agent.Loaf_<版>_aarch64.app.tar.gz.sig`（tauri-action 1 から版が入る）
    - `latest.json`
 6. dmg をダウンロードして開き、警告なしに開けることを確かめる
 7. 変更点を書いて「Publish release」を押す

@@ -42,7 +42,7 @@ Agent Loaf の価値は、対応が必要な会話を正しく知らせること
 
 ## 記録
 
-確かめた日、版（Agent Loaf・Claude Code・Codex・macOS）、組み合わせ、結果を書く。外れた場面は、何が起きたかを書く。
+確かめた日、版（Agent Loaf・Claude Code・Codex・macOS）、組み合わせ、結果を書く。外れた場面は、何が起きたかを書く。Claude Code では `/device-check` が案内と記録をする。
 
 | 日付 | Agent Loaf | Claude Code | Codex | macOS | 組み合わせ | 結果 |
 |---|---|---|---|---|---|---|

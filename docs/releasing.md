@@ -140,6 +140,8 @@ dmg 自体は署名だけで、公証はされない（Tauri が公証するの�
 
 ## 公開のたびに
 
+Claude Code では、`/release <版>`（`.claude/commands/release.md`）が下の手順を行う。実機の確認・タグの push・公開の前では、止まって確かめる。
+
 先に、[実機で確かめる場面](device-checks.md)をすべて通し、結果を記録する。
 
 1. 版の番号を上げる（3 か所。`cargo test --workspace` の `every_version_matches_the_app` が確かめる）

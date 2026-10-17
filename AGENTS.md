@@ -54,5 +54,6 @@ cargo fmt --all
 
 - 横断的な決定: [docs/adr/](docs/adr/)
 - 機能ごとの設計と計画: [docs/superpowers/specs/](docs/superpowers/specs/)・[docs/superpowers/plans/](docs/superpowers/plans/)
-- 公開の手順: [docs/releasing.md](docs/releasing.md)
+- 公開の手順: [docs/releasing.md](docs/releasing.md)。Claude Code では `/release <版>` がこの「公開のたびに」を行う
+- Pull Request の本文: Claude Code の `/pr-description` が、ひな形に沿って作る
 - 実機で確かめる場面: [docs/device-checks.md](docs/device-checks.md)

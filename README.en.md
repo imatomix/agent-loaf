@@ -157,3 +157,7 @@ Release steps (Japanese): `docs/releasing.md`. Design docs (Japanese): `docs/sup
 ## License
 
 MIT
+
+## Trademarks
+
+Claude Code is a trademark of Anthropic, and Codex is a trademark of OpenAI. The marks shown in the app belong to their respective owners. Agent Loaf is a personal project and is not affiliated with or endorsed by Anthropic or OpenAI.

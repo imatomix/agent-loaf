@@ -157,3 +157,7 @@ cd app && npm install && npm run tauri dev
 ## ライセンス
 
 MIT
+
+## 商標
+
+Claude Code は Anthropic の、Codex は OpenAI の商標です。アプリの中のマークも各社のものです。Agent Loaf は個人のプロジェクトで、Anthropic・OpenAI とは関係がなく、両社が後ろ盾になっているものでもありません。

@@ -73,8 +73,11 @@ Agent Loaf の新しい版を、署名・公証した dmg として GitHub の R
 
 ### 公開に切り替える
 
-13. リポジトリを公開にする: `gh repo edit imatomix/agent-loaf --visibility public --accept-visibility-change-consequences`
-14. `main` に、CI が通らないと Pull Request をマージできない決まりを付ける。無料のアカウントでは非公開のリポジトリに付けられないので、公開にした後に行う
+最後までリポジトリは非公開のままにし、外から見えるようになる操作を一番後にする。
+
+13. 下書きに変更点を書き、公開済みにする: `gh release edit v0.5.0 --notes-file <説明文のファイル> --draft=false --latest`。リポジトリが非公開の間は、見えるのはメンテナーだけ。説明文の見え方をここで確かめる
+14. リポジトリを公開にする: `gh repo edit imatomix/agent-loaf --visibility public --accept-visibility-change-consequences`
+15. `main` に、CI が通らないと Pull Request をマージできない決まりを付ける。無料のアカウントでは非公開のリポジトリに付けられないので、公開にした後に行う
 
     ```bash
     gh api -X PUT repos/imatomix/agent-loaf/branches/main/protection --input - <<'JSON'
@@ -83,8 +86,10 @@ Agent Loaf の新しい版を、署名・公証した dmg として GitHub の R
     ```
 
     `check` は CI のジョブの名前。`enforce_admins` を `false` にして、メンテナーが手元でマージした `main` を push できるようにしておく
-15. Releases の下書きに変更点を書いて「Publish release」を押す
-16. 自動更新の情報が取れることを確かめる: `curl -sL https://github.com/imatomix/agent-loaf/releases/latest/download/latest.json`
+16. Settings → Advanced Security で、Dependabot alerts と Dependabot security updates を有効にする。`.github/dependabot.yml` は版の更新を知らせるだけで、脆弱性の知らせはこれを有効にしないと届かない。gh の通常の権限では変えられないので、ブラウザで行う
+17. ログインしていない状態で、自動更新の情報と dmg が取れることを確かめる: `curl -sL https://github.com/imatomix/agent-loaf/releases/latest/download/latest.json`
+
+Dependabot は、`.github/dependabot.yml` を push した直後に一度動き、`main` の依存が変わるたびに調べ直す。最初の公開の前に届いた Pull Request は、公開した版には入れず、次の版のために `main` に入れる。
 
 非公開の間は、GitHub Actions に無料のアカウントの月ごとの枠がある（macOS は何倍かに数えられる）。CI と公開用のワークフローを数回動かす程度なら収まるが、何度も作り直すときは、GitHub の Settings → Billing で残りを見る。公開に切り替えた後は、使い放題になる。
 

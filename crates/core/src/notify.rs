@@ -10,6 +10,25 @@ pub struct Notice {
     pub body: String,
 }
 
+const NOTIFICATION_ID_PREFIX: &str = "session:";
+
+// macOS は同じ識別子の通知が通知センターに残っていると、バナーも音も出さずに中身だけ差し替えることがある。
+// 毎回別の識別子にして、同じセッションの古い通知は送る側で消す
+pub fn notification_id(session_id: &str, ts_ms: u64) -> String {
+    format!("{NOTIFICATION_ID_PREFIX}{session_id}:{ts_ms}")
+}
+
+// 0.5.1 までの識別子。通知センターに残っている古い通知を消すのに使う
+pub fn legacy_notification_id(session_id: &str) -> String {
+    format!("{NOTIFICATION_ID_PREFIX}{session_id}")
+}
+
+pub fn session_of_notification(id: &str) -> Option<&str> {
+    let rest = id.strip_prefix(NOTIFICATION_ID_PREFIX)?;
+    // 0.5.1 までは時刻を付けていなかった。セッション ID は UUID なので ':' を含まない
+    Some(rest.rsplit_once(':').map_or(rest, |(session_id, _)| session_id))
+}
+
 pub fn notice_for(change: &StatusChange, notify_on: &[Status], lang: Lang) -> Option<Notice> {
     // 現れたばかりのセッション（from が None）は、何かが終わったり止まったりしたわけではない
     if change.from.is_none() || change.from == Some(change.to) || !notify_on.contains(&change.to) {
@@ -127,6 +146,39 @@ mod tests {
                 body: "rate_limit".into()
             }
         );
+    }
+
+    #[test]
+    fn each_notification_gets_its_own_id() {
+        assert_ne!(notification_id("s1", 1_000), notification_id("s1", 2_000));
+    }
+
+    #[test]
+    fn notification_id_leads_back_to_its_session() {
+        assert_eq!(session_of_notification(&notification_id("s1", 1_000)), Some("s1"));
+        assert_eq!(
+            session_of_notification(&notification_id("019a-codex-thread", 5)),
+            Some("019a-codex-thread")
+        );
+    }
+
+    #[test]
+    fn ids_from_older_versions_still_lead_to_their_session() {
+        assert_eq!(
+            session_of_notification("session:cc4312e7-1ba0-4a13-8984-e7a065963c99"),
+            Some("cc4312e7-1ba0-4a13-8984-e7a065963c99")
+        );
+    }
+
+    #[test]
+    fn older_versions_used_one_id_per_session() {
+        assert_eq!(legacy_notification_id("s1"), "session:s1");
+        assert_eq!(session_of_notification(&legacy_notification_id("s1")), Some("s1"));
+    }
+
+    #[test]
+    fn ids_from_other_sources_belong_to_no_session() {
+        assert_eq!(session_of_notification("something-else"), None);
     }
 
     #[test]

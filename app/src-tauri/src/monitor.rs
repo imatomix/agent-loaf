@@ -14,7 +14,7 @@ use agent_loaf_core::persist::{load_json, save_json};
 use agent_loaf_core::ps::{process_cwd, run_ps, tracked_process_rows};
 use agent_loaf_core::settings::Settings;
 use agent_loaf_core::spool::{drain_spool, MAX_SPOOL_FILES};
-use agent_loaf_core::store::{SessionStore, INTERRUPT_QUIET_MS};
+use agent_loaf_core::store::{NotificationIds, SessionStore, INTERRUPT_QUIET_MS};
 use agent_loaf_core::transcript::transcript_ends_with_interrupt;
 use agent_loaf_core::view::{session_views, SessionView};
 use tauri::{AppHandle, Emitter, Manager};
@@ -105,6 +105,7 @@ fn run_tick(app: &AppHandle, check_processes: bool) -> bool {
         (settings.notify_on.clone(), monitored_dirs(&settings))
     };
     let mut notices: Vec<Notice> = Vec::new();
+    let deliveries: Vec<(Notice, NotificationIds)>;
     let mut changed = false;
     {
         let mut store = state.store.locked();
@@ -123,6 +124,14 @@ fn run_tick(app: &AppHandle, check_processes: bool) -> bool {
         if state.list_open.load(Ordering::Relaxed) {
             changed |= store.mark_finished_seen(now);
         }
+        deliveries = notices
+            .into_iter()
+            .map(|notice| {
+                let ids = store.record_notification(&notice.session_id, now);
+                (notice, ids)
+            })
+            .collect();
+        changed |= !deliveries.is_empty();
         changed |= store.hide_seen_finished(now);
         changed |= store.prune(now);
         if changed {
@@ -131,8 +140,8 @@ fn run_tick(app: &AppHandle, check_processes: bool) -> bool {
             }
         }
     }
-    for notice in notices {
-        notifier::show(&notice.title, &notice.body, &notice.session_id);
+    for (notice, ids) in deliveries {
+        notifier::show(&notice.title, &notice.body, &ids);
     }
     changed
 }

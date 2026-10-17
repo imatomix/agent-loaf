@@ -7,11 +7,13 @@ mod imp {
     use std::sync::atomic::{AtomicU8, Ordering};
     use std::sync::{Arc, OnceLock};
 
+    use agent_loaf_core::notify::session_of_notification;
+    use agent_loaf_core::store::NotificationIds;
     use block2::RcBlock;
     use objc2::rc::Retained;
     use objc2::runtime::{Bool, NSObject, NSObjectProtocol, ProtocolObject};
     use objc2::{define_class, msg_send, AnyThread};
-    use objc2_foundation::{NSBundle, NSError, NSString};
+    use objc2_foundation::{NSArray, NSBundle, NSError, NSString};
     use objc2_user_notifications::{
         UNAuthorizationOptions, UNAuthorizationStatus, UNMutableNotificationContent, UNNotification,
         UNNotificationPresentationOptions, UNNotificationRequest, UNNotificationResponse, UNNotificationSettings,
@@ -47,7 +49,7 @@ mod imp {
                 completion_handler: &block2::DynBlock<dyn Fn()>,
             ) {
                 let identifier = response.notification().request().identifier().to_string();
-                if let (Some(session_id), Some(on_open)) = (identifier.strip_prefix(SESSION_PREFIX), ON_OPEN.get()) {
+                if let (Some(session_id), Some(on_open)) = (session_of_notification(&identifier), ON_OPEN.get()) {
                     on_open(session_id.to_string());
                 }
                 completion_handler.call(());
@@ -66,7 +68,6 @@ mod imp {
     const DENIED: u8 = 2;
     // macOS の答えが来る前を「オフ」と区別しないと、起動直後に何もないのにバッジが出る
     static ACCESS: AtomicU8 = AtomicU8::new(UNKNOWN);
-    const SESSION_PREFIX: &str = "session:";
     static ON_OPEN: OnceLock<Box<dyn Fn(String) + Send + Sync>> = OnceLock::new();
 
     pub fn notifications_allowed() -> Option<bool> {
@@ -133,18 +134,16 @@ mod imp {
         );
     }
 
-    pub fn show(title: &str, body: &str, session_id: &str) {
+    pub fn show(title: &str, body: &str, ids: &NotificationIds) {
         let Some(center) = notification_center() else { return };
+        let stale: Vec<Retained<NSString>> = ids.stale.iter().map(|id| NSString::from_str(id)).collect();
+        center.removeDeliveredNotificationsWithIdentifiers(&NSArray::from_retained_slice(&stale));
         let content = UNMutableNotificationContent::new();
         content.setTitle(&NSString::from_str(title));
         content.setBody(&NSString::from_str(body));
         content.setSound(Some(&UNNotificationSound::defaultSound()));
-        // 識別子にセッション ID を入れると、押されたときにどのセッションか分かり、同じセッションの古い通知は置き換わる
-        let request = UNNotificationRequest::requestWithIdentifier_content_trigger(
-            &NSString::from_str(&format!("{SESSION_PREFIX}{session_id}")),
-            &content,
-            None,
-        );
+        let request =
+            UNNotificationRequest::requestWithIdentifier_content_trigger(&NSString::from_str(&ids.id), &content, None);
         let on_added = RcBlock::new(|error: *mut NSError| {
             if let Some(error) = unsafe { error.as_ref() } {
                 eprintln!("failed to send notification: {}", error.localizedDescription());
@@ -157,7 +156,7 @@ mod imp {
 #[cfg(not(target_os = "macos"))]
 mod imp {
     pub fn init(_on_change: impl Fn() + Send + Sync + 'static, _on_open: impl Fn(String) + Send + Sync + 'static) {}
-    pub fn show(_title: &str, _body: &str, _session_id: &str) {}
+    pub fn show(_title: &str, _body: &str, _ids: &agent_loaf_core::store::NotificationIds) {}
     pub fn notifications_allowed() -> Option<bool> {
         Some(true)
     }

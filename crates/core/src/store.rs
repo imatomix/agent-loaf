@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::agent::Agent;
 use crate::event::MonitorEvent;
+use crate::notify::{legacy_notification_id, notification_id};
 use crate::ps::{is_agent_command, is_interactive_session, launch_origin, ProcRow};
 use crate::state::{transition_for, DetailKind, Session, Status, Transition};
 
@@ -27,6 +28,12 @@ pub struct StatusChange {
     pub detail_text: Option<String>,
     pub ts_ms: u64,
     pub config_dir: String,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct NotificationIds {
+    pub id: String,
+    pub stale: Vec<String>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -80,6 +87,23 @@ impl SessionStore {
             self.hide_unused_sessions_in_window(host_pid, &ev.session_id);
         }
         Some(change)
+    }
+
+    // 同じセッションの通知は最新の 1 つだけを残す。新しい通知の識別子と、通知センターから消す識別子を返す
+    pub fn record_notification(&mut self, session_id: &str, now_ms: u64) -> NotificationIds {
+        let mut stale = vec![legacy_notification_id(session_id)];
+        let session = self.sessions.iter_mut().find(|s| s.id == session_id);
+        let previous = session.as_ref().and_then(|s| s.notification_id.clone());
+        let mut ts_ms = now_ms;
+        while previous.as_deref() == Some(notification_id(session_id, ts_ms).as_str()) {
+            ts_ms += 1;
+        }
+        let id = notification_id(session_id, ts_ms);
+        stale.extend(previous);
+        if let Some(session) = session {
+            session.notification_id = Some(id.clone());
+        }
+        NotificationIds { id, stale }
     }
 
     pub fn tracked_pids(&self) -> Vec<u32> {
@@ -270,6 +294,7 @@ fn new_session(ev: &MonitorEvent) -> Session {
         agent: ev.agent,
         seen_ms: None,
         hidden: false,
+        notification_id: None,
     }
 }
 
@@ -385,6 +410,7 @@ fn unknown_process_session(row: &ProcRow, cwd: String, now_ms: u64) -> Session {
         agent: Agent::ClaudeCode,
         seen_ms: None,
         hidden: false,
+        notification_id: None,
     }
 }
 
@@ -421,6 +447,47 @@ pub(crate) mod test_support {
 mod tests {
     use super::test_support::{ev, tool};
     use super::*;
+
+    #[test]
+    fn first_notification_removes_the_one_older_versions_left() {
+        let mut store = SessionStore::default();
+        store.apply(&ev("UserPromptSubmit", "s1", 1));
+        let ids = store.record_notification("s1", 100);
+        assert_eq!(ids.id, crate::notify::notification_id("s1", 100));
+        assert_eq!(ids.stale, vec![crate::notify::legacy_notification_id("s1")]);
+    }
+
+    #[test]
+    fn next_notification_removes_the_previous_one_even_after_a_restart() {
+        let mut store = SessionStore::default();
+        store.apply(&ev("UserPromptSubmit", "s1", 1));
+        let first = store.record_notification("s1", 100);
+        let restarted: SessionStore = serde_json::from_str(&serde_json::to_string(&store).unwrap()).unwrap();
+        let mut store = restarted;
+        let second = store.record_notification("s1", 200);
+        assert!(second.stale.contains(&first.id));
+        assert_ne!(second.id, first.id);
+    }
+
+    #[test]
+    fn notifications_in_the_same_millisecond_still_get_their_own_ids() {
+        let mut store = SessionStore::default();
+        store.apply(&ev("UserPromptSubmit", "s1", 1));
+        let first = store.record_notification("s1", 100);
+        let second = store.record_notification("s1", 100);
+        assert_ne!(second.id, first.id);
+        assert!(second.stale.contains(&first.id));
+    }
+
+    #[test]
+    fn other_sessions_keep_their_notifications() {
+        let mut store = SessionStore::default();
+        store.apply(&ev("UserPromptSubmit", "s1", 1));
+        store.apply(&ev("UserPromptSubmit", "s2", 1));
+        let first = store.record_notification("s1", 100);
+        let other = store.record_notification("s2", 200);
+        assert!(!other.stale.contains(&first.id));
+    }
 
     // 種類と中身から作った日本語の文面で比べると、組み立て方もあわせて確かめられる
     fn status_of(store: &SessionStore, id: &str) -> (Status, Option<String>) {

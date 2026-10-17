@@ -43,6 +43,7 @@ cargo fmt --all
 - アプリのアイコンは正方形のまま。角丸は macOS が付ける（ADR 0006）
 - 版の番号は 3 か所で上げる（ADR 0007、[docs/releasing.md](docs/releasing.md)）
 - コメントは理由（WHY）だけを日本語で書く。コミットのメッセージと Pull Request も日本語
+- 変更はブランチで行い、Pull Request で `main` に入れる。CI が通ってから `gh pr merge --rebase --delete-branch` でマージする（履歴を一直線に保ち、コミットも分けたまま残す）。実機の確認の記録など、文書だけの小さな変更は `main` に直接 push してよい
 - 新しいライブラリは、入れる前にメンテナーに確認する
 - 変更の後は、整形・clippy・テスト・型チェックを通してから完了とする（`./scripts/check.sh`、ADR 0002）。Claude Code では、`gh pr create` の前に hook がこれを動かし、通らなければ止める
 - 同じ原因の失敗を 2〜3 回直そうとして解消しないときは、繰り返さずに、何が・なぜ失敗しているかを報告して判断を仰ぐ

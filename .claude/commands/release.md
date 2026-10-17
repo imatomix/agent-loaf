@@ -30,7 +30,7 @@ disable-model-invocation: true
 
 ## 3. main に入れる
 
-`main` に fast-forward でマージし、ブランチを消して、`main` を push する。GitHub の上の CI（ci）が通るのを `gh run watch` で見届ける。
+ブランチを push し、`/pr-description` の決まりで本文を作って Pull Request にする（AGENTS.md）。CI が通ったら `gh pr merge --rebase --delete-branch` でマージし（`-R` を付けない）、手元の `main` を `git pull --ff-only` で合わせる。
 
 ## 4. タグを push する
 

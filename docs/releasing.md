@@ -164,7 +164,8 @@ Claude Code では、`/release <版>`（`.claude/commands/release.md`）が下�
 1. 版の番号を上げる（3 か所。`cargo test --workspace` の `every_version_matches_the_app` が確かめる）
    - ルートの `Cargo.toml` の `[workspace.package]`、`app/package.json`、`plugin/.claude-plugin/plugin.json`
    - 3 つの crate は `version.workspace = true` でルートの版を使う。`tauri.conf.json` には版を書かない（Tauri が `Cargo.toml` の版を使う）
-   - `cargo build --workspace && (cd app && npm install)` で `Cargo.lock` と `app/package-lock.json` も更新する
+   - `cargo build --workspace` で `Cargo.lock` も更新する
+   - `app/package-lock.json` は、先頭の `"version"` と `packages` の `""` の `"version"` の 2 行だけを直し、`(cd app && npm ci)` が通ることを確かめる。`npm install` で作り直すと、npm の版の違いで関係ない欄まで変わる（Dependabot は新しい npm で書く）
 2. コミットして `main` に入れ、push する
 3. タグを push する: `git tag v0.5.0 && git push origin v0.5.0`
 4. `gh run watch` で GitHub Actions を見届ける

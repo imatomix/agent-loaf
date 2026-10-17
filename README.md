@@ -55,7 +55,7 @@
 
 ## 入手
 
-[Releases](https://github.com/imatomix/agent-loaf/releases/latest) から `Agent Loaf_<版>_aarch64.dmg` をダウンロードして開き、Agent Loaf を「アプリケーション」フォルダーに入れてください。
+[Releases](https://github.com/imatomix/agent-loaf/releases/latest) から `Agent.Loaf_<版>_aarch64.dmg` をダウンロードして開き、Agent Loaf を「アプリケーション」フォルダーに入れてください。
 
 ## 導入
 

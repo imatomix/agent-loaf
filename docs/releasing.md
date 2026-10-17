@@ -67,7 +67,7 @@ Agent Loaf の新しい版を、署名・公証した dmg として GitHub の R
 
 8. 「一度だけの準備」の 8 のとおり、Secrets を入れる
 9. タグを push する: `git tag v0.5.0 && git push origin v0.5.0`。`gh run watch` で公開用のワークフローを見届ける
-10. Releases の下書きに、dmg、`Agent Loaf.app.tar.gz` と `.sig`、`latest.json` がそろっていることを確かめる
+10. Releases の下書きに、dmg、`Agent.Loaf_aarch64.app.tar.gz` と `.sig`、`latest.json` がそろっていることを確かめる（GitHub はファイルの名前の空白を `.` に変える）
 11. 下書きの dmg をダウンロードして開き、警告なしに開けること、アプリが動くことを確かめる
 12. 実機の確認の後に変えたところがあれば、見直し役（`.claude/agents/code-reviewer.md`）に見てもらう。直したときは、「うまくいかないとき」の「タグを付け直す」で作り直す
 
@@ -137,8 +137,8 @@ dmg 自体は署名だけで、公証はされない（Tauri が公証するの�
 3. タグを push する: `git tag v0.5.0 && git push origin v0.5.0`
 4. `gh run watch` で GitHub Actions を見届ける
 5. Releases の下書きを開き、次がそろっていることを確かめる
-   - `Agent Loaf_<版>_aarch64.dmg`
-   - `Agent Loaf.app.tar.gz` と `Agent Loaf.app.tar.gz.sig`
+   - `Agent.Loaf_<版>_aarch64.dmg`
+   - `Agent.Loaf_aarch64.app.tar.gz` と `Agent.Loaf_aarch64.app.tar.gz.sig`
    - `latest.json`
 6. dmg をダウンロードして開き、警告なしに開けることを確かめる
 7. 変更点を書いて「Publish release」を押す

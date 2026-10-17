@@ -55,7 +55,7 @@ Clicking a notification jumps the same way. Use the ∨ at the bottom right of a
 
 ## Getting the app
 
-Download `Agent Loaf_<version>_aarch64.dmg` from [Releases](https://github.com/imatomix/agent-loaf/releases/latest), open it, and move Agent Loaf into your Applications folder.
+Download `Agent.Loaf_<version>_aarch64.dmg` from [Releases](https://github.com/imatomix/agent-loaf/releases/latest), open it, and move Agent Loaf into your Applications folder.
 
 ## Setup
 

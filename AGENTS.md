@@ -57,4 +57,5 @@ cargo fmt --all
 - 機能ごとの設計と計画: [docs/superpowers/specs/](docs/superpowers/specs/)・[docs/superpowers/plans/](docs/superpowers/plans/)
 - 公開の手順: [docs/releasing.md](docs/releasing.md)。Claude Code では `/release <版>` がこの「公開のたびに」を行う
 - Pull Request の本文: Claude Code の `/pr-description` が、ひな形に沿って作る
-- 実機で確かめる場面: [docs/device-checks.md](docs/device-checks.md)
+- 実機で確かめる場面: [docs/device-checks.md](docs/device-checks.md)。Claude Code の `/device-check` が案内と記録をする
+- Dependabot の Pull Request: Claude Code の `/deps` が、変更点・セキュリティの修正・Tauri の版のそろい方を見てまとめる

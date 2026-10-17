@@ -24,7 +24,7 @@ disable-model-invocation: true
 
 1. `release/v$ARGUMENTS` のブランチを切る
 2. 3 か所の版を `$ARGUMENTS` にする: ルートの `Cargo.toml` の `[workspace.package]`、`app/package.json`、`plugin/.claude-plugin/plugin.json`
-3. `cargo build --workspace && (cd app && npm install)` で、`Cargo.lock` と `app/package-lock.json` を更新する
+3. `cargo build --workspace` で `Cargo.lock` を更新する。`app/package-lock.json` は版の 2 行（先頭と `packages` の `""`）だけを直し、`(cd app && npm ci)` が通ることを確かめる（`npm install` で作り直すと、npm の版の違いで関係ない欄まで変わる）
 4. `./scripts/check.sh` を通す（`every_version_matches_the_app` が 3 か所をそろえて確かめる）
 5. 「版を $ARGUMENTS にする」とコミットする
 

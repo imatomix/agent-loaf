@@ -1,6 +1,6 @@
 {
   "name": "agent-loaf",
   "description": "Hooks that report Claude Code session status to the Agent Loaf menu bar app",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT"
 }

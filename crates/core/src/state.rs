@@ -127,6 +127,9 @@ pub struct Session {
     pub seen_ms: Option<u64>,
     #[serde(default)]
     pub hidden: bool,
+    // macOS は起動し直したアプリに前の起動で送った通知を返さないので、次の通知で消せるように覚えておく
+    #[serde(default)]
+    pub notification_id: Option<String>,
 }
 
 impl Session {

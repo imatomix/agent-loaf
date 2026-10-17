@@ -166,6 +166,7 @@ mod tests {
             agent: Default::default(),
             seen_ms: None,
             hidden: false,
+            notification_id: None,
         }
     }
 

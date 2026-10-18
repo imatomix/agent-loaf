@@ -173,7 +173,7 @@ Claude Code では、`/release <版>`（`.claude/commands/release.md`）が下�
    - `Agent.Loaf_<版>_aarch64.dmg`
    - `Agent.Loaf_<版>_aarch64.app.tar.gz` と `Agent.Loaf_<版>_aarch64.app.tar.gz.sig`（tauri-action 1 から版が入る）
    - `latest.json`
-6. dmg をダウンロードして開き、警告なしに開けることを確かめる
+6. dmg をダウンロードして開き、警告なしに開けることと、設定の画面の版に `dev` が付いていないこと（公開のビルドである）を確かめる
 7. 変更点を書いて「Publish release」を押す
 8. 自動更新の情報が新しくなったことを確かめる: `curl -sL https://github.com/imatomix/agent-loaf/releases/latest/download/latest.json`
 

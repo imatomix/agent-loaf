@@ -26,7 +26,7 @@
   "details.location": "場所: {path}",
   "details.profile": "プロフィール: {name}",
   "details.unknown_value": "不明",
-  "details.not_monitored_help": "この会話を開いた後にプラグインが入ったか、使っている設定にプラグインが入っていません。プラグインを入れてから、会話を開き直すと監視されます。",
+  "details.not_monitored_help": "この会話を開いた後にプラグインが入ったか、使用している設定にプラグインが入っていません。プラグインを入れてから、会話を開き直すと監視されます。",
   "details.show": "詳細を開く",
   "details.hide": "詳細を閉じる",
   "tab.menu": "メニュー",

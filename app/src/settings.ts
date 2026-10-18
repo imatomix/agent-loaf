@@ -228,9 +228,9 @@ export function setupUpdateSection(): void {
   updateActionEl.addEventListener("click", () => void invoke("install_update"));
   void listen<UpdateState>("update-updated", (event) => renderUpdate(event.payload));
   // 一覧は開くたびに作り直すので、開いたときの状態を受け取る
-  void getVersion().then((version) => {
+  void Promise.all([getVersion(), invoke<boolean>("is_release_build")]).then(([version, release]) => {
     currentVersion = version;
-    appVersionEl.textContent = version;
+    appVersionEl.textContent = release ? version : `${version} dev`;
     return invoke<UpdateState>("get_update").then(renderUpdate);
   });
 }

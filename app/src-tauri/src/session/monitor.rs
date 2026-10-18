@@ -19,10 +19,10 @@ use agent_loaf_core::setup::config_dirs::Monitored;
 use agent_loaf_core::setup::install::install_hook_binary;
 use tauri::{AppHandle, Emitter, Manager};
 
-use crate::notifier;
-use crate::sync::LockExt;
+use crate::base::sync::LockExt;
+use crate::session::notifier;
+use crate::tray::icon::{tray_icon, IconCache};
 use crate::tray::TRAY_ID;
-use crate::tray_icon::{tray_icon, IconCache};
 
 // アプリ停止中に溜まった古いイベントで通知を乱発しないため、この時間より古い変化は通知しない
 pub const NOTIFY_FRESHNESS_MS: u64 = 30_000;
@@ -56,7 +56,7 @@ pub fn load_state(home: PathBuf) -> AppState {
         suppress_hide: AtomicBool::new(false),
         list_open: AtomicBool::new(false),
         pending_details: Mutex::new(None),
-        lang: crate::lang::detect(),
+        lang: crate::base::lang::detect(),
         tray_icon: Mutex::new(IconCache::default()),
         home,
     }
@@ -86,7 +86,7 @@ pub fn spawn(app: AppHandle) {
             if changed {
                 publish(&app);
             }
-            crate::updater::tick(&app, paths::now_ms());
+            crate::update::updater::tick(&app, paths::now_ms());
             tick = tick.wrapping_add(1);
             thread::sleep(TICK);
         }

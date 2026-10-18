@@ -1,7 +1,7 @@
 use agent_loaf_core::base::messages::{self};
 use tauri::{AppHandle, State};
 
-use crate::monitor::AppState;
+use crate::session::monitor::AppState;
 
 #[tauri::command]
 pub fn get_messages(state: State<'_, AppState>) -> std::collections::HashMap<String, String> {

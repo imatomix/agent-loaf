@@ -11,9 +11,9 @@ use std::time::Duration;
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_dialog::DialogExt;
 
-use crate::installer;
-use crate::monitor::AppState;
-use crate::sync::LockExt;
+use crate::base::sync::LockExt;
+use crate::session::monitor::AppState;
+use crate::setup::installer;
 
 #[tauri::command]
 pub fn get_setup(app: AppHandle) -> installer::SetupView {

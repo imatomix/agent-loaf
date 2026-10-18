@@ -7,7 +7,7 @@ use agent_loaf_core::update::{is_due, UpdateEvent, UpdateState};
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_updater::{Update, UpdaterExt};
 
-use crate::sync::LockExt;
+use crate::base::sync::LockExt;
 
 // 作るときに AGENT_LOAF_RELEASE を渡した公開のビルドだけが確かめる。開発のビルドは更新の設定（鍵）がなくても動かす
 pub const ENABLED: bool = option_env!("AGENT_LOAF_RELEASE").is_some();

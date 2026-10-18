@@ -57,6 +57,8 @@
   "info.removed_without_codex": "Removed {dir} from the list. The plugin is still installed there because codex was not found",
   "error.codex_not_found": "The codex command was not found. Enter its path in Settings.",
   "error.codex_path_invalid": "There is no codex command at that path.",
+  "error.codex_trust_failed": "Couldn't start allowing the Codex hooks: {error}",
+  "error.not_monitored_codex_dir": "{dir} isn't one of the Codex config directories being monitored.",
   "error.marketplace_unavailable": "Couldn't prepare the bundled plugin: {error}",
   "error.claude_not_found": "The claude command was not found",
   "error.claude_path_invalid": "No executable claude was found at that path",

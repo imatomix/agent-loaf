@@ -1,14 +1,14 @@
 use std::io::Read;
 use std::path::Path;
 
-use agent_loaf_core::agent::Agent;
-use agent_loaf_core::event::TerminalInfo;
-use agent_loaf_core::git::git_branch;
-use agent_loaf_core::hook_input::{build_event, is_conversation, HookContext};
-use agent_loaf_core::paths;
-use agent_loaf_core::procinfo::{ancestor_rows, process_argv};
-use agent_loaf_core::ps::find_agent_ancestor;
-use agent_loaf_core::spool::{spool_is_full, write_event, MAX_SPOOL_FILES};
+use agent_loaf_core::base::agent::Agent;
+use agent_loaf_core::base::paths;
+use agent_loaf_core::process::git::git_branch;
+use agent_loaf_core::process::procinfo::{ancestor_rows, process_argv};
+use agent_loaf_core::process::ps::find_agent_ancestor;
+use agent_loaf_core::session::event::TerminalInfo;
+use agent_loaf_core::session::hook_input::{build_event, is_conversation, HookContext};
+use agent_loaf_core::session::spool::{spool_is_full, write_event, MAX_SPOOL_FILES};
 
 fn main() {
     // Claude Code の動作を妨げないため、パニックも含めて何も出力せず常に 0 で終わる

@@ -2,8 +2,8 @@ use std::path::Path;
 
 use serde::Deserialize;
 
-use crate::claude_cli::CliError;
-use crate::plugin_status::{Inspection, MarketplacePresence, PluginPresence, MARKETPLACE_NAME, PLUGIN_ID};
+use crate::setup::claude_cli::CliError;
+use crate::setup::plugin_status::{Inspection, MarketplacePresence, PluginPresence, MARKETPLACE_NAME, PLUGIN_ID};
 
 // Codex が許可の対象にするイベント。hooks.json に Claude Code にしかない名前があっても、Codex は数えない
 pub const CODEX_HOOK_EVENTS: [&str; 12] = [
@@ -133,7 +133,7 @@ mod tests {
 
     #[test]
     fn reads_the_events_our_plugin_registers() {
-        let events = registered_hook_events(include_str!("../../../plugin/hooks/hooks.json"));
+        let events = registered_hook_events(include_str!("../../../../plugin/hooks/hooks.json"));
         assert!(events.contains(&"Stop".to_string()));
         assert!(events.contains(&"SessionStart".to_string()));
         assert_eq!(registered_hook_events("not json"), Vec::<String>::new());

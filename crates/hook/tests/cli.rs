@@ -144,12 +144,15 @@ fn writes_nothing_when_spool_is_full() {
     let home = tempfile::tempdir().unwrap();
     let events = home.path().join("events");
     fs::create_dir_all(&events).unwrap();
-    for i in 0..agent_loaf_core::spool::MAX_SPOOL_FILES {
+    for i in 0..agent_loaf_core::session::spool::MAX_SPOOL_FILES {
         fs::write(events.join(format!("{i:013}-1-1.json")), b"{}").unwrap();
     }
     let (output, _) = run_hook(home.path(), PRE_TOOL_USE);
     assert_silent_success(&output);
-    assert_eq!(event_files(home.path()).len(), agent_loaf_core::spool::MAX_SPOOL_FILES);
+    assert_eq!(
+        event_files(home.path()).len(),
+        agent_loaf_core::session::spool::MAX_SPOOL_FILES
+    );
 }
 
 #[test]

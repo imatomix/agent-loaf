@@ -1,4 +1,4 @@
-use agent_loaf_core::state::Status;
+use agent_loaf_core::session::state::Status;
 use tauri::image::Image;
 
 // Figma の MenuBarIcon（18pt 四方）を scripts/make-tray-icons.sh で 36px にしたもの。

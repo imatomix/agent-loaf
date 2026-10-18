@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use crate::agent::Agent;
-use crate::plugin_status::{Inspection, MarketplacePresence, PluginPresence, MARKETPLACE_NAME, PLUGIN_ID};
+use crate::base::agent::Agent;
+use crate::setup::plugin_status::{Inspection, MarketplacePresence, PluginPresence, MARKETPLACE_NAME, PLUGIN_ID};
 
 pub const INSPECT_PLUGINS: [&str; 3] = ["plugin", "list", "--json"];
 pub const INSPECT_MARKETPLACES: [&str; 4] = ["plugin", "marketplace", "list", "--json"];
@@ -83,7 +83,7 @@ pub fn remove_steps(inspection: &Inspection) -> Vec<CliStep> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::plugin_status::{MarketplacePresence as M, PluginPresence as P};
+    use crate::setup::plugin_status::{MarketplacePresence as M, PluginPresence as P};
 
     fn i(plugin: P, marketplace: M) -> Inspection {
         Inspection { plugin, marketplace }
@@ -168,7 +168,7 @@ mod tests {
 
     #[test]
     fn codex_steps_use_codex_commands() {
-        use crate::agent::Agent;
+        use crate::base::agent::Agent;
         let dir = Path::new("/b");
         assert_eq!(
             CliStep::MarketplaceAdd.args_for(Agent::Codex, dir),

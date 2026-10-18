@@ -81,8 +81,8 @@ pub fn table(lang: Lang) -> &'static HashMap<String, String> {
     static JA: OnceLock<HashMap<String, String>> = OnceLock::new();
     static EN: OnceLock<HashMap<String, String>> = OnceLock::new();
     let (cell, source) = match lang {
-        Lang::Ja => (&JA, include_str!("../locales/ja.json")),
-        Lang::En => (&EN, include_str!("../locales/en.json")),
+        Lang::Ja => (&JA, include_str!("../../locales/ja.json")),
+        Lang::En => (&EN, include_str!("../../locales/en.json")),
     };
     cell.get_or_init(|| serde_json::from_str(source).expect("embedded message table is unreadable"))
 }

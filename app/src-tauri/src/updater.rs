@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 use std::time::Duration;
 
-use agent_loaf_core::paths;
+use agent_loaf_core::base::paths;
 use agent_loaf_core::update::{is_due, UpdateEvent, UpdateState};
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_updater::{Update, UpdaterExt};

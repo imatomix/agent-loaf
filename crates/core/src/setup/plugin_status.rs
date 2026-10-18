@@ -2,7 +2,7 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
-use crate::claude_cli::CliError;
+use crate::setup::claude_cli::CliError;
 
 pub const PLUGIN_ID: &str = "agent-loaf@agent-loaf";
 pub const MARKETPLACE_NAME: &str = "agent-loaf";
@@ -163,7 +163,7 @@ mod tests {
         for (plugins, marketplaces) in [("", "[]"), ("[]", "{oops"), ("{\"a\":1}", "[]"), ("[]", "null")] {
             assert_eq!(
                 parse_inspection(plugins, marketplaces, Path::new(BUNDLED)).unwrap_err(),
-                crate::claude_cli::CliError::Unreadable
+                crate::setup::claude_cli::CliError::Unreadable
             );
         }
     }

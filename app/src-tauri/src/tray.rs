@@ -1,6 +1,6 @@
 use std::sync::atomic::Ordering;
 
-use agent_loaf_core::paths;
+use agent_loaf_core::base::paths;
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{App, AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, WindowEvent};
 use tauri_plugin_positioner::{Position, WindowExt};

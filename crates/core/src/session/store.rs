@@ -3,11 +3,11 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
-use crate::agent::Agent;
-use crate::event::MonitorEvent;
-use crate::notify::{legacy_notification_id, notification_id};
-use crate::ps::{is_agent_command, is_interactive_session, launch_origin, ProcRow};
-use crate::state::{transition_for, DetailKind, Session, Status, Transition};
+use crate::base::agent::Agent;
+use crate::process::ps::{is_agent_command, is_interactive_session, launch_origin, ProcRow};
+use crate::session::event::MonitorEvent;
+use crate::session::notify::{legacy_notification_id, notification_id};
+use crate::session::state::{transition_for, DetailKind, Session, Status, Transition};
 
 pub const UNKNOWN_ID_PREFIX: &str = "pid:";
 pub const ENDED_RETENTION_MS: u64 = 5 * 60 * 1000;
@@ -416,7 +416,7 @@ fn unknown_process_session(row: &ProcRow, cwd: String, now_ms: u64) -> Session {
 
 #[cfg(test)]
 pub(crate) mod test_support {
-    use crate::event::{EventDetail, MonitorEvent};
+    use crate::session::event::{EventDetail, MonitorEvent};
 
     pub fn ev(event: &str, session: &str, ts_ms: u64) -> MonitorEvent {
         MonitorEvent {
@@ -453,8 +453,8 @@ mod tests {
         let mut store = SessionStore::default();
         store.apply(&ev("UserPromptSubmit", "s1", 1));
         let ids = store.record_notification("s1", 100);
-        assert_eq!(ids.id, crate::notify::notification_id("s1", 100));
-        assert_eq!(ids.stale, vec![crate::notify::legacy_notification_id("s1")]);
+        assert_eq!(ids.id, crate::session::notify::notification_id("s1", 100));
+        assert_eq!(ids.stale, vec![crate::session::notify::legacy_notification_id("s1")]);
     }
 
     #[test]
@@ -494,7 +494,11 @@ mod tests {
         let s = store.sessions().iter().find(|s| s.id == id).unwrap();
         (
             s.status,
-            crate::view::detail_label(crate::messages::Lang::Ja, s.detail_kind, s.detail_text.as_deref()),
+            crate::session::view::detail_label(
+                crate::base::messages::Lang::Ja,
+                s.detail_kind,
+                s.detail_text.as_deref(),
+            ),
         )
     }
     fn start(session: &str, ts_ms: u64, source: &str) -> MonitorEvent {
@@ -907,8 +911,8 @@ mod tests {
         assert_eq!(status_of(&store, "s1").0, Status::Ended);
     }
 
-    fn claude_row(pid: u32) -> crate::ps::ProcRow {
-        crate::ps::ProcRow {
+    fn claude_row(pid: u32) -> crate::process::ps::ProcRow {
+        crate::process::ps::ProcRow {
             pid,
             ppid: 1,
             tty: None,
@@ -1019,13 +1023,13 @@ mod tests {
 
     fn codex(event: &str, session: &str, ts_ms: u64) -> MonitorEvent {
         let mut e = ev(event, session, ts_ms);
-        e.agent = crate::agent::Agent::Codex;
+        e.agent = crate::base::agent::Agent::Codex;
         e.claude_pid = Some(500);
         e
     }
 
-    fn codex_row(pid: u32) -> crate::ps::ProcRow {
-        crate::ps::ProcRow { pid, ppid: 1, tty: None, args: "/Users/u/.vscode/extensions/openai.chatgpt-26.1007.21434-darwin-arm64/bin/macos-aarch64/codex -c features.code_mode_host=true app-server".into() }
+    fn codex_row(pid: u32) -> crate::process::ps::ProcRow {
+        crate::process::ps::ProcRow { pid, ppid: 1, tty: None, args: "/Users/u/.vscode/extensions/openai.chatgpt-26.1007.21434-darwin-arm64/bin/macos-aarch64/codex -c features.code_mode_host=true app-server".into() }
     }
 
     #[test]
@@ -1077,7 +1081,7 @@ mod tests {
         );
         store.apply(&codex("Interrupt", "a", 2_000));
         assert_eq!(status_of(&store, "a"), (Status::Done, Some("中断".into())));
-        assert_eq!(store.sessions()[0].agent, crate::agent::Agent::Codex);
+        assert_eq!(store.sessions()[0].agent, crate::base::agent::Agent::Codex);
     }
 
     const SEEN: u64 = 10_000;
@@ -1166,7 +1170,7 @@ mod tests {
     fn start_in(session: &str, ts_ms: u64, pid: u32, host_pid: u32) -> MonitorEvent {
         let mut e = start(session, ts_ms, "startup");
         e.claude_pid = Some(pid);
-        e.terminal = Some(crate::event::TerminalInfo {
+        e.terminal = Some(crate::session::event::TerminalInfo {
             host_pid: Some(host_pid),
             ..Default::default()
         });

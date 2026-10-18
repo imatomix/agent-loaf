@@ -1,7 +1,7 @@
-use crate::messages::{self, Lang, Msg};
-use crate::state::{DetailKind, Status};
-use crate::store::StatusChange;
-use crate::view::{detail_label, status_label};
+use crate::base::messages::{self, Lang, Msg};
+use crate::session::state::{DetailKind, Status};
+use crate::session::store::StatusChange;
+use crate::session::view::{detail_label, status_label};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Notice {
@@ -60,8 +60,8 @@ pub fn notice_for(change: &StatusChange, notify_on: &[Status], lang: Lang) -> Op
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::messages::Lang;
-    use crate::state::DetailKind;
+    use crate::base::messages::Lang;
+    use crate::session::state::DetailKind;
 
     fn change(from: Option<Status>, to: Status, kind: Option<DetailKind>, text: Option<&str>) -> StatusChange {
         StatusChange {

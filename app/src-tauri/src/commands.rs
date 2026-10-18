@@ -1,15 +1,15 @@
-use agent_loaf_core::order::move_before;
-use agent_loaf_core::paths;
-use agent_loaf_core::persist::save_json;
-use agent_loaf_core::settings::Preferences;
-use agent_loaf_core::view::SessionView;
+use agent_loaf_core::base::paths;
+use agent_loaf_core::base::persist::save_json;
+use agent_loaf_core::base::settings::Preferences;
+use agent_loaf_core::session::order::move_before;
+use agent_loaf_core::session::view::SessionView;
 use std::path::Path;
 use std::sync::atomic::Ordering;
 
-use agent_loaf_core::claude_cli::{is_executable, run_command};
-use agent_loaf_core::codex_plugin::trust_command_script;
-use agent_loaf_core::config_dirs::is_monitored_codex_dir;
-use agent_loaf_core::messages::{self, Msg};
+use agent_loaf_core::base::messages::{self, Msg};
+use agent_loaf_core::setup::claude_cli::{is_executable, run_command};
+use agent_loaf_core::setup::codex_plugin::trust_command_script;
+use agent_loaf_core::setup::config_dirs::is_monitored_codex_dir;
 use std::time::Duration;
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_autostart::ManagerExt;

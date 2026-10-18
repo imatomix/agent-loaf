@@ -2,9 +2,9 @@ use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
-use agent_loaf_core::claude_cli::run_command;
-use agent_loaf_core::jump::{jump_target, JumpTarget};
-use agent_loaf_core::procinfo::ancestor_rows;
+use agent_loaf_core::process::jump::{jump_target, JumpTarget};
+use agent_loaf_core::process::procinfo::ancestor_rows;
+use agent_loaf_core::setup::claude_cli::run_command;
 use tauri::{AppHandle, Manager};
 
 use crate::monitor::AppState;

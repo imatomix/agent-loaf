@@ -1,8 +1,8 @@
 use serde_json::Value;
 
-use crate::agent::Agent;
+use crate::base::agent::Agent;
 
-use crate::event::{EventDetail, MonitorEvent, TerminalInfo, SCHEMA_VERSION, SUMMARY_MAX_CHARS};
+use crate::session::event::{EventDetail, MonitorEvent, TerminalInfo, SCHEMA_VERSION, SUMMARY_MAX_CHARS};
 
 pub struct HookContext {
     pub ts_ms: u64,
@@ -136,7 +136,7 @@ fn codex_subcommand(args: &[String]) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::agent::Agent;
+    use crate::base::agent::Agent;
 
     fn argv(joined: &str) -> Vec<String> {
         joined.split_whitespace().map(String::from).collect()

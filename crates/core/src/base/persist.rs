@@ -17,17 +17,17 @@ pub fn save_json<T: Serialize>(path: &Path, value: &T) -> io::Result<()> {
         fs::create_dir_all(parent)?;
     }
     let tmp = path.with_extension("json.tmp");
-    crate::paths::write_private(&tmp, &serde_json::to_vec_pretty(value)?)?;
+    crate::base::paths::write_private(&tmp, &serde_json::to_vec_pretty(value)?)?;
     fs::rename(&tmp, path)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::settings::Settings;
-    use crate::state::Status;
-    use crate::store::test_support::ev;
-    use crate::store::SessionStore;
+    use crate::base::settings::Settings;
+    use crate::session::state::Status;
+    use crate::session::store::test_support::ev;
+    use crate::session::store::SessionStore;
 
     #[test]
     fn round_trips_settings_and_store() {
@@ -90,6 +90,6 @@ mod tests {
         let store: SessionStore = load_json(&dir.path().join("state.json"));
         assert_eq!(store.sessions().len(), 1);
         assert!(store.sessions()[0].running_subagents.is_empty());
-        assert_eq!(store.sessions()[0].agent, crate::agent::Agent::ClaudeCode);
+        assert_eq!(store.sessions()[0].agent, crate::base::agent::Agent::ClaudeCode);
     }
 }

@@ -1,7 +1,7 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { ICON_DELETE, ICON_REPLAY, ICON_SETTINGS } from "../../lib/icons";
+import { ICON_DELETE, ICON_REPLAY, ICON_SETTINGS } from "./icons";
 import { t } from "../../lib/i18n";
 import type { ConfigDirView, Preferences, SetupView, Status, UpdateState } from "../../lib/types";
 

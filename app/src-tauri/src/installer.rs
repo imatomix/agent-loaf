@@ -9,7 +9,7 @@ use agent_loaf_core::agent::{agent_of_config_dir, Agent};
 use agent_loaf_core::attention::needs_attention;
 use agent_loaf_core::claude_cli::{find_claude, find_codex, is_executable, ClaudeCli, CliError, CLI_TIMEOUT};
 use agent_loaf_core::codex_plugin::{hooks_trusted, parse_codex_inspection};
-use agent_loaf_core::config_dirs::{display_path, initial_config_dirs, is_codex_dir, offer_codex_dir};
+use agent_loaf_core::config_dirs::{display_path, initial_config_dirs, is_codex_dir, lists_dir, offer_codex_dir};
 use agent_loaf_core::install_plan::{
     install_steps, remove_steps, update_steps, CliStep, INSPECT_MARKETPLACES, INSPECT_PLUGINS,
 };
@@ -200,7 +200,7 @@ fn startup(app: &AppHandle) {
 fn add(app: &AppHandle, path: String) {
     let added = update_settings(app, |settings| {
         let mut dirs = settings.config_dirs.clone().unwrap_or_default();
-        if dirs.contains(&path) {
+        if lists_dir(&dirs, &path) {
             return false;
         }
         dirs.push(path.clone());

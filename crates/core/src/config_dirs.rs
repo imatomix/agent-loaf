@@ -37,12 +37,18 @@ pub fn initial_config_dirs(current: Option<&[String]>, default_dir: &Path) -> Op
 
 pub fn offer_codex_dir(current: Option<&[String]>, offered: bool, codex_dir: &Path) -> Option<Vec<String>> {
     let codex = codex_dir.to_string_lossy().into_owned();
-    if offered || !codex_dir.is_dir() || current.is_some_and(|dirs| dirs.contains(&codex)) {
+    if offered || !codex_dir.is_dir() || current.is_some_and(|dirs| lists_dir(dirs, &codex)) {
         return None;
     }
     let mut dirs = current.map(<[String]>::to_vec).unwrap_or_default();
     dirs.push(codex);
     Some(dirs)
+}
+
+// 末尾の '/' やシンボリックリンクで書き方が違っても、同じフォルダーなら同じとみなす
+pub fn lists_dir(dirs: &[String], path: &str) -> bool {
+    let wanted = normalized(path);
+    dirs.iter().any(|dir| normalized(dir) == wanted)
 }
 
 pub fn is_codex_dir(path: &str, codex_dir: &Path) -> bool {
@@ -145,6 +151,38 @@ mod tests {
             None,
             "もう入っている"
         );
+    }
+
+    #[test]
+    fn codex_dir_already_listed_in_another_form_is_not_offered_again() {
+        let home = tempfile::tempdir().unwrap();
+        let codex = home.path().join(".codex");
+        std::fs::create_dir(&codex).unwrap();
+        let link = home.path().join("codex-link");
+        std::os::unix::fs::symlink(&codex, &link).unwrap();
+        let with_slash = format!("{}/", codex.to_string_lossy());
+        assert_eq!(
+            offer_codex_dir(Some(std::slice::from_ref(&with_slash)), false, &codex),
+            None
+        );
+        let via_link = link.to_string_lossy().into_owned();
+        assert_eq!(
+            offer_codex_dir(Some(std::slice::from_ref(&via_link)), false, &codex),
+            None
+        );
+    }
+
+    #[test]
+    fn a_folder_counts_as_listed_however_it_is_written() {
+        let home = tempfile::tempdir().unwrap();
+        let claude = home.path().join(".claude");
+        std::fs::create_dir(&claude).unwrap();
+        let link = home.path().join("claude-link");
+        std::os::unix::fs::symlink(&claude, &link).unwrap();
+        let listed = vec![claude.to_string_lossy().into_owned()];
+        assert!(lists_dir(&listed, &format!("{}/", claude.to_string_lossy())));
+        assert!(lists_dir(&listed, &link.to_string_lossy()));
+        assert!(!lists_dir(&listed, "/u/.codex"));
     }
 
     #[test]

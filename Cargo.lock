@@ -10,7 +10,7 @@ checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 
 [[package]]
 name = "agent-loaf-app"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "agent-loaf-core",
  "block2",
@@ -30,7 +30,7 @@ dependencies = [
 
 [[package]]
 name = "agent-loaf-core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "dirs 7.0.0",
  "libc",
@@ -41,7 +41,7 @@ dependencies = [
 
 [[package]]
 name = "agent-loaf-hook"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "agent-loaf-core",
  "serde_json",

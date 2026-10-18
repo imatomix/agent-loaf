@@ -1,9 +1,9 @@
 use serde::Serialize;
 
-use crate::agent::Agent;
-use crate::config_dirs::Monitored;
-use crate::messages::{text, Lang, Msg};
-use crate::state::{DetailKind, Session, Status};
+use crate::base::agent::Agent;
+use crate::base::messages::{text, Lang, Msg};
+use crate::session::state::{DetailKind, Session, Status};
+use crate::setup::config_dirs::Monitored;
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct SessionView {
@@ -31,7 +31,7 @@ pub fn session_views(
         .iter()
         .filter(|s| s.status != Status::Ended && !s.hidden && monitored.includes(&s.id, &s.config_dir))
         .collect();
-    let (arranged, next_order) = crate::order::arrange(&active, order);
+    let (arranged, next_order) = crate::session::order::arrange(&active, order);
     let views = arranged
         .into_iter()
         .map(|session| {
@@ -99,8 +99,8 @@ pub fn detail_label(lang: Lang, kind: Option<DetailKind>, detail_text: Option<&s
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::store::test_support::ev;
-    use crate::store::SessionStore;
+    use crate::session::store::test_support::ev;
+    use crate::session::store::SessionStore;
 
     fn store_with(events: &[(&str, &str, &str, &str, u32)]) -> SessionStore {
         let mut store = SessionStore::default();
@@ -117,8 +117,8 @@ mod tests {
 
     #[test]
     fn detail_label_joins_kind_and_text_in_each_language() {
-        use crate::messages::Lang;
-        use crate::state::DetailKind;
+        use crate::base::messages::Lang;
+        use crate::session::state::DetailKind;
         assert_eq!(
             detail_label(Lang::Ja, Some(DetailKind::Permission), Some("Bash: rm -rf dist")).as_deref(),
             Some("許可待ち · Bash: rm -rf dist")
@@ -151,7 +151,7 @@ mod tests {
         );
         assert_eq!(detail_label(Lang::En, None, None), None);
         assert_eq!(
-            status_label(Lang::En, crate::state::Status::NeedsAction),
+            status_label(Lang::En, crate::session::state::Status::NeedsAction),
             "Needs action"
         );
     }
@@ -166,7 +166,7 @@ mod tests {
             store.sessions(),
             &[],
             &Monitored::new(&["/u/.claude".into()]),
-            crate::messages::Lang::Ja,
+            crate::base::messages::Lang::Ja,
         );
         assert_eq!(views.iter().map(|v| v.id.as_str()).collect::<Vec<_>>(), ["a"]);
     }
@@ -181,7 +181,7 @@ mod tests {
             store.sessions(),
             &[],
             &Monitored::new(&["/u/.claude".into()]),
-            crate::messages::Lang::Ja,
+            crate::base::messages::Lang::Ja,
         )
         .0;
         assert_eq!(
@@ -204,7 +204,7 @@ mod tests {
             store.sessions(),
             &[],
             &Monitored::new(&["/u/.claude".into()]),
-            crate::messages::Lang::Ja,
+            crate::base::messages::Lang::Ja,
         )
         .0;
         assert_eq!(views.iter().map(|v| v.id.as_str()).collect::<Vec<_>>(), ["b"]);
@@ -220,7 +220,7 @@ mod tests {
             store.sessions(),
             &[],
             &Monitored::new(&["/u/.claude".into()]),
-            crate::messages::Lang::Ja,
+            crate::base::messages::Lang::Ja,
         )
         .0;
         assert_eq!(views[0].branch.as_deref(), Some("main"));
@@ -229,8 +229,8 @@ mod tests {
 
     #[test]
     fn composes_every_detail_kind() {
-        use crate::messages::Lang::Ja;
-        use crate::state::DetailKind::*;
+        use crate::base::messages::Lang::Ja;
+        use crate::session::state::DetailKind::*;
         let label = |kind, text: Option<&str>| detail_label(Ja, Some(kind), text);
         assert_eq!(detail_label(Ja, None, Some("x")), None);
         assert_eq!(label(Tool, Some("Bash: ls")).as_deref(), Some("Bash: ls"));
@@ -275,7 +275,7 @@ mod tests {
             &Monitored::new(&["/Users/u/.claude".into()]),
             Lang::Ja,
         );
-        assert_eq!(views[0].agent, crate::agent::Agent::ClaudeCode);
+        assert_eq!(views[0].agent, crate::base::agent::Agent::ClaudeCode);
     }
 
     #[test]
@@ -295,12 +295,12 @@ mod tests {
             store.apply(&e);
         }
         store.mark_finished_seen(20);
-        store.hide_seen_finished(20 + crate::store::SEEN_FINISHED_HIDE_MS);
+        store.hide_seen_finished(20 + crate::session::store::SEEN_FINISHED_HIDE_MS);
         let (views, _) = session_views(
             store.sessions(),
             &[],
             &Monitored::new(&["/u/.claude".into()]),
-            crate::messages::Lang::Ja,
+            crate::base::messages::Lang::Ja,
         );
         let ids: Vec<&str> = views.iter().map(|v| v.id.as_str()).collect();
         assert_eq!(ids, ["b"]);

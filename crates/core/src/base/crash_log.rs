@@ -2,7 +2,7 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
-use crate::paths::write_private;
+use crate::base::paths::write_private;
 
 pub const MAX_BYTES: usize = 64 * 1024;
 

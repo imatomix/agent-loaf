@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::agent::Agent;
+use crate::base::agent::Agent;
 
 pub const SCHEMA_VERSION: u32 = 1;
 pub const SUMMARY_MAX_CHARS: usize = 120;

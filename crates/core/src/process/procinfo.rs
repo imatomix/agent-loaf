@@ -41,7 +41,7 @@ mod imp {
     use std::sync::OnceLock;
 
     use super::{parse_procargs2_argv, reads_args, MAX_ANCESTORS};
-    use crate::ps::ProcRow;
+    use crate::process::ps::ProcRow;
 
     struct BsdInfo {
         ppid: u32,
@@ -249,7 +249,7 @@ mod imp {
 
 #[cfg(not(target_os = "macos"))]
 mod imp {
-    use crate::ps::ProcRow;
+    use crate::process::ps::ProcRow;
 
     pub fn list_processes() -> Option<Vec<ProcRow>> {
         None
@@ -369,7 +369,11 @@ mod tests {
         let link = dir.path().join("claude");
         std::os::unix::fs::symlink(&binary, &link).unwrap();
         let mut child = std::process::Command::new(&link)
-            .args(["--ignored", "--exact", "procinfo::tests::waits_as_a_stand_in_process"])
+            .args([
+                "--ignored",
+                "--exact",
+                "process::procinfo::tests::waits_as_a_stand_in_process",
+            ])
             .stdout(std::process::Stdio::null())
             .spawn()
             .unwrap();
@@ -380,7 +384,7 @@ mod tests {
         child.wait().unwrap();
         let row = row.expect("一覧に出る");
         assert!(
-            crate::ps::is_agent_command(&row.args),
+            crate::process::ps::is_agent_command(&row.args),
             "引数を読めていない: {:?}",
             row.args
         );

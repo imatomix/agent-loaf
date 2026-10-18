@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 
-use agent_loaf_core::messages::{table, Lang};
+use agent_loaf_core::base::messages::{table, Lang};
 
 fn keys_in(text: &str, open: &str, close: char) -> Vec<String> {
     text.match_indices(open)

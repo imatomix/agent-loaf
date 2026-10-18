@@ -1,9 +1,9 @@
 use std::fs;
 use std::path::Path;
 
-use agent_loaf_core::event::MonitorEvent;
-use agent_loaf_core::state::Status;
-use agent_loaf_core::store::SessionStore;
+use agent_loaf_core::session::event::MonitorEvent;
+use agent_loaf_core::session::state::Status;
+use agent_loaf_core::session::store::SessionStore;
 
 fn parse_status(name: &str) -> Option<Status> {
     match name {

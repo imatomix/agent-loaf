@@ -7,8 +7,8 @@ mod imp {
     use std::sync::atomic::{AtomicU8, Ordering};
     use std::sync::{Arc, OnceLock};
 
-    use agent_loaf_core::notify::session_of_notification;
-    use agent_loaf_core::store::NotificationIds;
+    use agent_loaf_core::session::notify::session_of_notification;
+    use agent_loaf_core::session::store::NotificationIds;
     use block2::RcBlock;
     use objc2::rc::Retained;
     use objc2::runtime::{Bool, NSObject, NSObjectProtocol, ProtocolObject};
@@ -156,7 +156,7 @@ mod imp {
 #[cfg(not(target_os = "macos"))]
 mod imp {
     pub fn init(_on_change: impl Fn() + Send + Sync + 'static, _on_open: impl Fn(String) + Send + Sync + 'static) {}
-    pub fn show(_title: &str, _body: &str, _ids: &agent_loaf_core::store::NotificationIds) {}
+    pub fn show(_title: &str, _body: &str, _ids: &agent_loaf_core::session::store::NotificationIds) {}
     pub fn notifications_allowed() -> Option<bool> {
         Some(true)
     }

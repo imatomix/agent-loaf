@@ -2,10 +2,10 @@ use std::fs;
 use std::path::Path;
 use std::time::Duration;
 
-use agent_loaf_core::claude_cli::{find_claude, is_executable, ClaudeCli, CLI_TIMEOUT};
-use agent_loaf_core::install_plan::{install_steps, remove_steps, INSPECT_MARKETPLACES, INSPECT_PLUGINS};
-use agent_loaf_core::marketplace::sync_marketplace;
-use agent_loaf_core::plugin_status::{parse_inspection, DirState, Inspection};
+use agent_loaf_core::setup::claude_cli::{find_claude, is_executable, ClaudeCli, CLI_TIMEOUT};
+use agent_loaf_core::setup::install_plan::{install_steps, remove_steps, INSPECT_MARKETPLACES, INSPECT_PLUGINS};
+use agent_loaf_core::setup::marketplace::sync_marketplace;
+use agent_loaf_core::setup::plugin_status::{parse_inspection, DirState, Inspection};
 
 fn words(list: &[&str]) -> Vec<String> {
     list.iter().map(|w| w.to_string()).collect()

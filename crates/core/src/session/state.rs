@@ -3,8 +3,8 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
-use crate::agent::Agent;
-use crate::event::{MonitorEvent, TerminalInfo};
+use crate::base::agent::Agent;
+use crate::session::event::{MonitorEvent, TerminalInfo};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

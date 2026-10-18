@@ -9,8 +9,8 @@ mod tray;
 mod tray_icon;
 mod updater;
 
-use agent_loaf_core::crash_log;
-use agent_loaf_core::paths;
+use agent_loaf_core::base::crash_log;
+use agent_loaf_core::base::paths;
 use tauri_plugin_autostart::MacosLauncher;
 
 fn main() {

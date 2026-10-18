@@ -3,7 +3,7 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::event::MonitorEvent;
+use crate::session::event::MonitorEvent;
 
 pub const MAX_SPOOL_FILES: usize = 10_000;
 // hook は 5 秒で打ち切られるので、1 分たった一時ファイルが書き終わることはない
@@ -29,7 +29,7 @@ pub fn write_event(events_dir: &Path, event: &MonitorEvent) -> io::Result<PathBu
     let final_path = events_dir.join(&name);
     // 途中まで書かれたファイルをアプリに読ませないため、一時ファイルに書いてから名前を変える
     let tmp_path = events_dir.join(format!("{name}.tmp"));
-    crate::paths::write_private(&tmp_path, &serde_json::to_vec(event)?)?;
+    crate::base::paths::write_private(&tmp_path, &serde_json::to_vec(event)?)?;
     fs::rename(&tmp_path, &final_path)?;
     Ok(final_path)
 }
@@ -81,7 +81,7 @@ fn is_stale(path: &Path, now: SystemTime) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::event::EventDetail;
+    use crate::session::event::EventDetail;
 
     fn ev(event: &str, ts_ms: u64) -> MonitorEvent {
         MonitorEvent {
@@ -191,6 +191,6 @@ mod tests {
     fn events_from_older_hooks_are_claude_code() {
         let old = r#"{"schema":1,"ts_ms":1,"event":"Stop","session_id":"s1","agent_id":null,"claude_pid":7,"config_dir":"/c","cwd":"/w","transcript_path":null,"detail":{"tool_name":null,"summary":null,"notification_type":null,"error_type":null},"terminal":null,"git_branch":null}"#;
         let event: MonitorEvent = serde_json::from_str(old).unwrap();
-        assert_eq!(event.agent, crate::agent::Agent::ClaudeCode);
+        assert_eq!(event.agent, crate::base::agent::Agent::ClaudeCode);
     }
 }

@@ -1,4 +1,4 @@
-use crate::plugin_status::DirState;
+use crate::setup::plugin_status::DirState;
 
 // None は「まだ調べ終わっていない」。起動直後にわからないことを問題として数えると、何もないのにバッジが出る
 pub fn needs_attention(

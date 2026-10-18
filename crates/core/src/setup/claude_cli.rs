@@ -5,7 +5,7 @@ use std::process::{Command, Stdio};
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::messages::{self, Lang, Msg};
+use crate::base::messages::{self, Lang, Msg};
 
 pub const CLI_TIMEOUT: Duration = Duration::from_secs(60);
 const REASON_MAX_CHARS: usize = 200;
@@ -324,7 +324,7 @@ mod tests {
 
     #[test]
     fn error_messages_follow_the_language() {
-        use crate::messages::Lang;
+        use crate::base::messages::Lang;
         assert_eq!(CliError::Timeout.message(Lang::En), "Timed out (no response)");
         assert_eq!(
             CliError::Failed("blocked".into()).message(Lang::Ja),

@@ -1,4 +1,4 @@
-use agent_loaf_core::messages::Lang;
+use agent_loaf_core::base::messages::Lang;
 
 pub fn detect() -> Lang {
     let tag = preferred_localization().or_else(|| std::env::var("LANG").ok());

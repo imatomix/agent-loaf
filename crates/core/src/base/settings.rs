@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::state::Status;
+use crate::session::state::Status;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(default)]

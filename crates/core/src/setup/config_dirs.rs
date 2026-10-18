@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 use std::path::Path;
 
-use crate::agent::{agent_of_config_dir, Agent};
-use crate::store::UNKNOWN_ID_PREFIX;
+use crate::base::agent::{agent_of_config_dir, Agent};
+use crate::session::store::UNKNOWN_ID_PREFIX;
 
 // 監視の対象（「Claude Code の設定」の一覧）で動いているセッションだけを表示・通知するための照合
 #[derive(Debug, Clone, Default)]

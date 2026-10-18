@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::state::Session;
-use crate::store::UNKNOWN_ID_PREFIX;
+use crate::session::state::Session;
+use crate::session::store::UNKNOWN_ID_PREFIX;
 
 pub const MAX_ORDER_LEN: usize = 500;
 
@@ -64,8 +64,8 @@ pub fn move_before(order: &[String], id: &str, before: Option<&str>) -> Vec<Stri
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::store::test_support::ev;
-    use crate::store::SessionStore;
+    use crate::session::store::test_support::ev;
+    use crate::session::store::SessionStore;
 
     fn sessions(specs: &[(&str, &str)]) -> Vec<Session> {
         let mut store = SessionStore::default();

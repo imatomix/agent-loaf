@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
 
-use crate::agent::Agent;
-use crate::ps::{is_agent_command, ProcRow};
-use crate::state::Session;
+use crate::base::agent::Agent;
+use crate::process::ps::{is_agent_command, ProcRow};
+use crate::session::state::Session;
 
 const EDITOR_ENTRYPOINT: &str = "claude-vscode";
 const MAX_DEPTH: usize = 32;
@@ -104,8 +104,8 @@ pub fn jump_target(session: &Session, rows: &[ProcRow]) -> JumpTarget {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::event::TerminalInfo;
-    use crate::state::Status;
+    use crate::session::event::TerminalInfo;
+    use crate::session::state::Status;
 
     const VSCODE_HELPER: &str = "/Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) --type=utility";
     const CLAUDE_IN_VSCODE: &str = "/Users/u/.vscode/extensions/anthropic.claude-code-2.1.296-darwin-arm64/resources/native-binary/claude --output-format stream-json";
@@ -312,7 +312,7 @@ mod tests {
             row(300, 200, CODEX_IN_VSCODE),
         ];
         let mut s = session("s1", 300, None, None);
-        s.agent = crate::agent::Agent::Codex;
+        s.agent = crate::base::agent::Agent::Codex;
         assert_eq!(
             jump_target(&s, &rows),
             JumpTarget::App {
@@ -330,7 +330,7 @@ mod tests {
             row(300, 1, "/opt/homebrew/bin/codex app-server"),
         ];
         let mut s = session("s1", 300, None, None);
-        s.agent = crate::agent::Agent::Codex;
+        s.agent = crate::base::agent::Agent::Codex;
         assert_eq!(jump_target(&s, &rows), JumpTarget::None);
     }
 
@@ -345,7 +345,7 @@ mod tests {
             row(13, 12, "/Users/u/.vscode/extensions/openai.chatgpt-26.1007.21434-darwin-arm64/bin/macos-aarch64/codex --no-daemon"),
         ];
         let mut s = session("s1", 13, None, None);
-        s.agent = crate::agent::Agent::Codex;
+        s.agent = crate::base::agent::Agent::Codex;
         assert_eq!(
             jump_target(&s, &rows),
             JumpTarget::App {

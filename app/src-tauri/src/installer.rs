@@ -5,20 +5,22 @@ use std::sync::mpsc::{self, Receiver, Sender};
 use std::sync::Mutex;
 use std::thread;
 
-use agent_loaf_core::agent::{agent_of_config_dir, Agent};
-use agent_loaf_core::attention::needs_attention;
-use agent_loaf_core::claude_cli::{find_claude, find_codex, is_executable, ClaudeCli, CliError, CLI_TIMEOUT};
-use agent_loaf_core::codex_plugin::{hooks_trusted, parse_codex_inspection, registered_hook_events};
-use agent_loaf_core::config_dirs::{display_path, initial_config_dirs, is_codex_dir, lists_dir, offer_codex_dir};
-use agent_loaf_core::install_plan::{
+use agent_loaf_core::base::agent::{agent_of_config_dir, Agent};
+use agent_loaf_core::base::messages::{self, Lang, Msg};
+use agent_loaf_core::base::paths;
+use agent_loaf_core::base::persist::save_json;
+use agent_loaf_core::base::settings::Settings;
+use agent_loaf_core::setup::attention::needs_attention;
+use agent_loaf_core::setup::claude_cli::{find_claude, find_codex, is_executable, ClaudeCli, CliError, CLI_TIMEOUT};
+use agent_loaf_core::setup::codex_plugin::{hooks_trusted, parse_codex_inspection, registered_hook_events};
+use agent_loaf_core::setup::config_dirs::{
+    display_path, initial_config_dirs, is_codex_dir, lists_dir, offer_codex_dir,
+};
+use agent_loaf_core::setup::install_plan::{
     install_steps, remove_steps, update_steps, CliStep, INSPECT_MARKETPLACES, INSPECT_PLUGINS,
 };
-use agent_loaf_core::marketplace::{bundled_plugin_version, sync_marketplace};
-use agent_loaf_core::messages::{self, Lang, Msg};
-use agent_loaf_core::paths;
-use agent_loaf_core::persist::save_json;
-use agent_loaf_core::plugin_status::{parse_inspection, DirState, Inspection};
-use agent_loaf_core::settings::Settings;
+use agent_loaf_core::setup::marketplace::{bundled_plugin_version, sync_marketplace};
+use agent_loaf_core::setup::plugin_status::{parse_inspection, DirState, Inspection};
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};

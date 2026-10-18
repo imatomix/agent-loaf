@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::agent::Agent;
+use crate::base::agent::Agent;
 #[cfg(not(target_os = "macos"))]
 use std::process::Command;
 
@@ -54,7 +54,7 @@ fn parse_line(line: &str) -> Option<ProcRow> {
 pub fn run_ps() -> Option<Vec<ProcRow>> {
     #[cfg(target_os = "macos")]
     {
-        crate::procinfo::list_processes()
+        crate::process::procinfo::list_processes()
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -69,7 +69,7 @@ pub fn run_ps() -> Option<Vec<ProcRow>> {
 pub fn tracked_process_rows(pids: &[u32]) -> Option<Vec<ProcRow>> {
     #[cfg(target_os = "macos")]
     {
-        Some(crate::procinfo::process_rows(pids))
+        Some(crate::process::procinfo::process_rows(pids))
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -176,7 +176,7 @@ pub fn launch_origin(args: &str) -> LaunchOrigin {
 pub fn process_cwd(pid: u32) -> Option<String> {
     #[cfg(target_os = "macos")]
     {
-        crate::procinfo::working_directory(pid)
+        crate::process::procinfo::working_directory(pid)
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -306,7 +306,7 @@ mod tests {
 
     #[test]
     fn tells_codex_from_claude_and_other_programs() {
-        use crate::agent::Agent;
+        use crate::base::agent::Agent;
         assert_eq!(agent_of("/Users/u/.local/bin/claude"), Some(Agent::ClaudeCode));
         assert_eq!(agent_of(CODEX_IN_VSCODE), Some(Agent::Codex));
         assert_eq!(agent_of("/opt/homebrew/bin/codex exec hi"), Some(Agent::Codex));
@@ -318,7 +318,7 @@ mod tests {
 
     #[test]
     fn finds_the_nearest_agent_ancestor() {
-        use crate::agent::Agent;
+        use crate::base::agent::Agent;
         // Claude Code の会話の中で codex を動かしたときは、近い方（codex）を取る
         let rows = vec![
             row(1, 0, "/sbin/launchd"),

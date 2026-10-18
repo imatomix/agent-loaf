@@ -19,6 +19,11 @@ updates:
       minor-and-patch:
         update-types: ["minor", "patch"]
 
+  - package-ecosystem: "rust-toolchain"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

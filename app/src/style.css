@@ -50,7 +50,10 @@ button { font: inherit; color: inherit; border: none; background: none; padding:
 .sessions { position: relative; }
 .row[data-id] { touch-action: none; }
 .row.dragging { position: relative; z-index: 1; background: var(--bg-hover); box-shadow: 0 6px 16px rgb(0 0 0 / 0.45); }
-.drop-indicator { position: absolute; left: 0; right: 0; height: 2px; margin-top: -1px; background: var(--fg-secondary); pointer-events: none; }
+.sessions.reordering .row[data-id]:not(.dragging) { transition: transform 150ms ease; }
+@media (prefers-reduced-motion: reduce) {
+  .sessions.reordering .row[data-id]:not(.dragging) { transition: none; }
+}
 .dot-box { display: flex; align-items: center; padding: 4px 0; flex: none; }
 .dot { width: 8px; height: 8px; border-radius: 50%; }
 .dot-needs_action { background: var(--needs-action); }

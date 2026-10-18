@@ -35,7 +35,7 @@
   "settings.open_system_settings": "システム設定を開く",
   "settings.claude_configs": "エージェントの設定",
   "settings.add_config_dir": "＋ 設定ディレクトリを追加",
-  "settings.no_config_dirs": "エージェントの設定ディレクトリが見つかりませんでした。使っている設定ディレクトリ（~/.claude や ~/.codex など）を追加してください。",
+  "settings.no_config_dirs": "エージェントの設定ディレクトリが見つかりませんでした。使用している設定ディレクトリ（~/.claude や ~/.codex など）を追加してください。",
   "settings.claude_not_found": "claude コマンドが見つかりません。場所を入力してください。",
   "settings.codex_not_found": "codex コマンドが見つかりません。場所を入力してください。",
   "settings.codex_trust_needed": "Codex の hook の許可が必要です。ターミナルで Codex を開き、Agent Loaf の hook を許可してください。",

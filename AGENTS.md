@@ -8,11 +8,24 @@ Claude Code と Codex の会話（セッション）の状態を、macOS のメ�
 
 ## 構成
 
+```
+agents-monitor/
+  app/                 画面とアプリ（Tauri の 1 つのアプリ）
+    src/               画面（features/・lib/）
+    src-tauri/src/     OS とのつなぎ（commands/・session/・setup/・process/・update/・tray/・base/）
+  crates/
+    core/src/          判断のロジック（session/・setup/・process/・update/・base/）
+    hook/src/          hook の本体
+  plugin/  .claude-plugin/  scripts/  docs/
+```
+
+`src` という名前のフォルダーがいくつもあるのは、道具（Cargo・Vite）の決まり。それぞれの入り口の README に、中の決まりがある（ADR 0010）。
+
 | 場所 | 役割 |
 |---|---|
-| `app/src/` | 画面（TypeScript と Vite） |
-| `app/src-tauri/` | Tauri のアプリ。OS とのつなぎ |
-| `crates/core/` | 判断と状態。純粋な関数を中心にする |
+| `app/src/` | 画面（TypeScript と Vite）。中は ADR 0010 と入り口の README |
+| `app/src-tauri/` | Tauri のアプリ。OS とのつなぎ。中は ADR 0010 と `src/README.md` |
+| `crates/core/` | 判断と状態。純粋な関数を中心にする。中は ADR 0010 と `src/README.md` |
 | `crates/hook/` | Claude Code と Codex から呼ばれる hook の本体 |
 | `plugin/` | Claude Code と Codex に入れるプラグイン |
 | `.claude-plugin/` | プラグインのマーケットプレイス（ルートから動かせない） |

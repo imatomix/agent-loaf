@@ -152,6 +152,19 @@ cd app && npm install && npm run tauri dev
 - Notifications don't appear under `tauri dev` (it doesn't run as an app bundle)
 - Running Claude Code with the `AGENT_LOAF_DEBUG_RAW` environment variable makes the hook save the full input it receives to `~/.agent-loaf/raw`. It's meant for debugging; delete it when you're done
 
+Layout (each folder's README and `docs/adr/0010-directory-layout.md` describe what goes where, in Japanese):
+
+```
+agents-monitor/
+  app/                 Screens and the app (one Tauri app)
+    src/               Screens (features/, lib/)
+    src-tauri/src/     OS integration (commands/, session/, setup/, process/, update/, tray/, base/)
+  crates/
+    core/src/          Decision logic (session/, setup/, process/, update/, base/)
+    hook/src/          The hook
+  plugin/  .claude-plugin/  scripts/  docs/
+```
+
 Release steps (Japanese): `docs/releasing.md`. Design docs (Japanese): `docs/superpowers/specs/`
 
 ## License

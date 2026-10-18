@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::path::Path;
 
+use crate::agent::{agent_of_config_dir, Agent};
 use crate::store::UNKNOWN_ID_PREFIX;
 
 // 監視の対象（「Claude Code の設定」の一覧）で動いているセッションだけを表示・通知するための照合
@@ -49,6 +50,11 @@ pub fn offer_codex_dir(current: Option<&[String]>, offered: bool, codex_dir: &Pa
 pub fn lists_dir(dirs: &[String], path: &str) -> bool {
     let wanted = normalized(path);
     dirs.iter().any(|dir| normalized(dir) == wanted)
+}
+
+// 画面から渡されたパスで codex を動かすので、監視している Codex の設定ディレクトリに限る
+pub fn is_monitored_codex_dir(dirs: &[String], path: &str) -> bool {
+    lists_dir(dirs, path) && agent_of_config_dir(Path::new(path)) == Agent::Codex
 }
 
 pub fn is_codex_dir(path: &str, codex_dir: &Path) -> bool {
@@ -183,6 +189,29 @@ mod tests {
         assert!(lists_dir(&listed, &format!("{}/", claude.to_string_lossy())));
         assert!(lists_dir(&listed, &link.to_string_lossy()));
         assert!(!lists_dir(&listed, "/u/.codex"));
+    }
+
+    #[test]
+    fn codex_trust_runs_only_for_a_monitored_codex_dir() {
+        let home = tempfile::tempdir().unwrap();
+        let codex = home.path().join(".codex");
+        let claude = home.path().join(".claude");
+        std::fs::create_dir(&codex).unwrap();
+        std::fs::create_dir(&claude).unwrap();
+        let codex_s = codex.to_string_lossy().into_owned();
+        let claude_s = claude.to_string_lossy().into_owned();
+        let listed = vec![codex_s.clone(), claude_s.clone()];
+        assert!(is_monitored_codex_dir(&listed, &codex_s));
+        assert!(
+            !is_monitored_codex_dir(&listed, &claude_s),
+            "Claude Code の設定には Codex の許可は要らない"
+        );
+        let elsewhere = home.path().join("other/.codex");
+        std::fs::create_dir_all(&elsewhere).unwrap();
+        assert!(
+            !is_monitored_codex_dir(&listed, &elsewhere.to_string_lossy()),
+            "一覧にないフォルダーでは動かさない"
+        );
     }
 
     #[test]

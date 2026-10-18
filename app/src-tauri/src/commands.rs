@@ -8,6 +8,7 @@ use std::sync::atomic::Ordering;
 
 use agent_loaf_core::claude_cli::{is_executable, run_command};
 use agent_loaf_core::codex_plugin::trust_command_script;
+use agent_loaf_core::config_dirs::is_monitored_codex_dir;
 use agent_loaf_core::messages::{self, Msg};
 use std::time::Duration;
 use tauri::{AppHandle, Manager, State};
@@ -154,11 +155,20 @@ pub fn set_codex_path(app: AppHandle, state: State<'_, AppState>, path: String) 
 
 #[tauri::command]
 pub fn open_codex_trust(app: AppHandle, state: State<'_, AppState>, path: String) -> Result<(), String> {
+    let monitored = state.settings.locked().config_dirs.clone().unwrap_or_default();
+    if !is_monitored_codex_dir(&monitored, &path) {
+        return Err(messages::format(
+            state.lang,
+            Msg::ErrorNotMonitoredCodexDir,
+            &[("dir", &installer::display(&path))],
+        ));
+    }
     let codex = installer::codex_path(&app).ok_or_else(|| messages::text(state.lang, Msg::ErrorCodexNotFound))?;
     let work_dir = state.home.join("codex-trust");
     let script = state.home.join("codex-trust.command");
-    let fail =
-        |error: std::io::Error| messages::format(state.lang, Msg::ErrorSaveSettings, &[("error", &error.to_string())]);
+    let fail = |error: std::io::Error| {
+        messages::format(state.lang, Msg::ErrorCodexTrustFailed, &[("error", &error.to_string())])
+    };
     paths::prepare_private_dir(&work_dir).map_err(fail)?;
     paths::write_private(
         &script,
@@ -178,7 +188,13 @@ pub fn open_codex_trust(app: AppHandle, state: State<'_, AppState>, path: String
         Duration::from_secs(5),
     )
     .map(|_| ())
-    .map_err(|error| error.message(state.lang))
+    .map_err(|error| {
+        messages::format(
+            state.lang,
+            Msg::ErrorCodexTrustFailed,
+            &[("error", &error.message(state.lang))],
+        )
+    })
 }
 
 #[tauri::command]

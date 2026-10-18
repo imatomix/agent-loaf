@@ -401,7 +401,7 @@ fn update_settings<T>(app: &AppHandle, change: impl FnOnce(&mut Settings) -> T) 
     result
 }
 
-fn display(path: &str) -> String {
+pub fn display(path: &str) -> String {
     display_path(path, &dirs::home_dir().unwrap_or_default())
 }
 

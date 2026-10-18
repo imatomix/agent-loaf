@@ -62,6 +62,8 @@ messages! {
     InfoRemovedWithoutCodex => "info.removed_without_codex",
     ErrorCodexNotFound => "error.codex_not_found",
     ErrorCodexPathInvalid => "error.codex_path_invalid",
+    ErrorCodexTrustFailed => "error.codex_trust_failed",
+    ErrorNotMonitoredCodexDir => "error.not_monitored_codex_dir",
     ErrorMarketplaceUnavailable => "error.marketplace_unavailable",
     ErrorClaudeNotFound => "error.claude_not_found",
     ErrorClaudePathInvalid => "error.claude_path_invalid",

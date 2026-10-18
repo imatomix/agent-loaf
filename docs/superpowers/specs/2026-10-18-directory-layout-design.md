@@ -28,7 +28,7 @@
 
 - 3 つの置き場所は今のまま変えない（ADR 0001）。判断は `crates/core`、OS とのつなぎは `app/src-tauri`、画面は `app/src`
 - それぞれの中を、機能ごとのフォルダーに分ける。フォルダーの名前は、3 つの置き場所でできるだけそろえる（`session`・`setup` など）
-- 2 つ以上の機能から使うものだけを `base`（Rust）・`lib`（画面）に置く。先回りして共通化しない
+- 2 つ以上の機能から使うもの、または、どの機能にも属さないアプリ全体の土台（言語の判定、落ちたときの記録など）だけを`base`（Rust）・`lib`（画面）に置く。先回りして共通化しない
 - `src` という名前のフォルダーは 4 つある（`crates/core/src`・`crates/hook/src`・`app/src-tauri/src`・`app/src`）。どれも道具（Cargo・Vite）の決まりなので、名前は変えない。代わりに、入り口の README の 1 行目に「ここは何の `src` か」を書き、`AGENTS.md` と `README.md` に全体の図を載せる
 
 ## `crates/core/src/`（判断のロジック）
@@ -88,8 +88,8 @@ app/src-tauri/src/
 app/src/
   features/
     list/       一覧の画面：list・drag・format
-    settings/   設定の画面：settings
-  lib/          2 つ以上の画面から使うもの：i18n・icons・types
+    settings/   設定の画面：settings・icons
+  lib/          2 つ以上の画面から使うもの：i18n・types
   assets/       画像（今のまま）
   style.css     見た目（今のまま）
   vite-env.d.ts （今のまま）

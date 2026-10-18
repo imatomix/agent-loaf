@@ -8,7 +8,7 @@ Agent Loaf の判断のロジック（Rust の crate `agent-loaf-core`）。Taur
 | `setup/` | 設定ディレクトリと、プラグインや hook の導入。CLI の呼び出し（claude_cli）、導入の手順（install_plan）、状態（plugin_status）、設定の画面のバッジ（attention） |
 | `process/` | プロセスを読む（ps・procinfo）・画面を移動する（jump）・git のブランチ（git） |
 | `update/` | 自動更新の状態の移り変わり |
-| `base/` | 2 つ以上の機能から使う土台。agent・paths・persist・settings・messages・crash_log |
+| `base/` | 2 つ以上の機能から使うものと、どの機能にも属さない土台。agent・paths・persist・settings・messages・crash_log |
 
 ## 決まり
 

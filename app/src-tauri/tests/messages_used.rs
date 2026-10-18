@@ -21,13 +21,23 @@ fn every_key_used_by_the_page_exists() {
     let html = fs::read_to_string(app.join("index.html")).unwrap();
     used.extend(keys_in(&html, "data-i18n=\"", '"'));
     used.extend(keys_in(&html, "data-i18n-title=\"", '"'));
-    for entry in fs::read_dir(app.join("src")).unwrap() {
-        let path = entry.unwrap().path();
-        if path.extension().is_some_and(|e| e == "ts") {
-            used.extend(keys_in(&fs::read_to_string(&path).unwrap(), "t(\"", '"'));
+    let mut dirs = vec![app.join("src")];
+    while let Some(dir) = dirs.pop() {
+        for entry in fs::read_dir(&dir).unwrap() {
+            let path = entry.unwrap().path();
+            if path.is_dir() {
+                dirs.push(path);
+            } else if path.extension().is_some_and(|e| e == "ts") {
+                used.extend(keys_in(&fs::read_to_string(&path).unwrap(), "t(\"", '"'));
+            }
         }
     }
     assert!(used.len() > 10, "キーを拾えていない: {used:?}");
+    // 設定の画面だけが使うキー。画面のファイルを下のフォルダーまで読めているかを確かめる
+    assert!(
+        used.iter().any(|key| key == "settings.codex_trust_open"),
+        "app/src の下のフォルダーの .ts を読めていない"
+    );
     for key in used {
         assert!(table(Lang::Ja).contains_key(&key), "{key} が対応表にない");
     }

@@ -8,7 +8,7 @@ use std::thread;
 use agent_loaf_core::agent::{agent_of_config_dir, Agent};
 use agent_loaf_core::attention::needs_attention;
 use agent_loaf_core::claude_cli::{find_claude, find_codex, is_executable, ClaudeCli, CliError, CLI_TIMEOUT};
-use agent_loaf_core::codex_plugin::{hooks_trusted, parse_codex_inspection};
+use agent_loaf_core::codex_plugin::{hooks_trusted, parse_codex_inspection, registered_hook_events};
 use agent_loaf_core::config_dirs::{display_path, initial_config_dirs, is_codex_dir, lists_dir, offer_codex_dir};
 use agent_loaf_core::install_plan::{
     install_steps, remove_steps, update_steps, CliStep, INSPECT_MARKETPLACES, INSPECT_PLUGINS,
@@ -327,13 +327,14 @@ fn inspect(app: &AppHandle, cli: &ClaudeCli, agent: Agent, path: &str) -> Result
 // config.toml は読むだけ。書き換えると Codex の許可の仕組みを回り道することになる
 fn check_trust(app: &AppHandle, path: &str) {
     let config = std::fs::read_to_string(Path::new(path).join("config.toml")).unwrap_or_default();
-    let hooks_json =
-        std::fs::read_to_string(paths::marketplace_dir(&app.state::<AppState>().home).join("plugin/hooks/hooks.json"))
-            .unwrap_or_default();
-    let registered: Vec<String> = serde_json::from_str::<serde_json::Value>(&hooks_json)
+    // 写しの ~/.agent-loaf/marketplace は作れないことがあるので、アプリに同梱した元を読む
+    let hooks_json = app
+        .path()
+        .resource_dir()
         .ok()
-        .and_then(|v| v.get("hooks")?.as_object().map(|m| m.keys().cloned().collect()))
+        .and_then(|dir| std::fs::read_to_string(dir.join("marketplace/plugin/hooks/hooks.json")).ok())
         .unwrap_or_default();
+    let registered = registered_hook_events(&hooks_json);
     let registered: Vec<&str> = registered.iter().map(String::as_str).collect();
     app.state::<InstallerState>()
         .trust

@@ -90,6 +90,13 @@ fn snake_case(event: &str) -> String {
     out
 }
 
+pub fn registered_hook_events(hooks_json: &str) -> Vec<String> {
+    serde_json::from_str::<serde_json::Value>(hooks_json)
+        .ok()
+        .and_then(|v| v.get("hooks")?.as_object().map(|m| m.keys().cloned().collect()))
+        .unwrap_or_default()
+}
+
 // TOML のライブラリを足さないため、許可の記録の見出しの行だけを読む。指紋（trusted_hash）は Codex の計算を真似ることになるので見ない
 pub fn hooks_trusted(config_toml: &str, registered: &[&str]) -> bool {
     let prefix = format!("[hooks.state.\"{PLUGIN_ID}:hooks/hooks.json:");
@@ -123,6 +130,14 @@ pub fn trust_command_script(codex: &Path, codex_home: &Path, work_dir: &Path) ->
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn reads_the_events_our_plugin_registers() {
+        let events = registered_hook_events(include_str!("../../../plugin/hooks/hooks.json"));
+        assert!(events.contains(&"Stop".to_string()));
+        assert!(events.contains(&"SessionStart".to_string()));
+        assert_eq!(registered_hook_events("not json"), Vec::<String>::new());
+    }
 
     const BUNDLED: &str = "/Users/u/.agent-loaf/marketplace";
 

@@ -152,6 +152,19 @@ cd app && npm install && npm run tauri dev
 - `tauri dev` では通知が出ません（アプリとして起動していないため）
 - 環境変数 `AGENT_LOAF_DEBUG_RAW` を付けて Claude Code を動かすと、hook が受け取った入力の全文を `~/.agent-loaf/raw` に保存します。調べもの用なので、使い終わったら消してください
 
+構成（中の決まりは、それぞれの入り口の README と `docs/adr/0010-directory-layout.md`）:
+
+```
+agents-monitor/
+  app/                 画面とアプリ（Tauri の 1 つのアプリ）
+    src/               画面（features/・lib/）
+    src-tauri/src/     OS とのつなぎ（commands/・session/・setup/・process/・update/・tray/・base/）
+  crates/
+    core/src/          判断のロジック（session/・setup/・process/・update/・base/）
+    hook/src/          hook の本体
+  plugin/  .claude-plugin/  scripts/  docs/
+```
+
 公開の手順: `docs/releasing.md`　設計: `docs/superpowers/specs/`
 
 ## ライセンス

@@ -1,10 +1,10 @@
 :root {
-  --bg: #f4f4f5;
-  --bg-hover: #e4e4e7;
+  --bg: #e4e4e7;
+  --bg-hover: #d4d4d8;
   --fg: #18181b;
   --fg-secondary: #3f3f46;
-  --border-primary: #e4e4e7;
-  --border-secondary: #e4e4e7;
+  --border-primary: #d4d4d8;
+  --border-secondary: #d4d4d8;
   --needs-action: #facc15;
   --error: #dc2626;
   --done: #2563eb;

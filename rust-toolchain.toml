@@ -1,5 +1,5 @@
 # 手元・CI・公開のビルドで同じ Rust を使う。新しい版は Dependabot が Pull Request で知らせる
 [toolchain]
-channel = "1.99.0"
+channel = "1.99.1"
 components = ["rustfmt", "clippy"]
 targets = ["aarch64-apple-darwin"]

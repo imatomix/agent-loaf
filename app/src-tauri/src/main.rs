@@ -59,6 +59,7 @@ fn main() {
             commands::take_pending_details,
             commands::refresh_notification_access,
             commands::get_update,
+            commands::is_release_build,
             commands::install_update,
             commands::quit_app,
         ])

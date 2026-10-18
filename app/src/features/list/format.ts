@@ -1,4 +1,4 @@
-import { t } from "./i18n";
+import { t } from "../../lib/i18n";
 
 export function formatElapsed(ms: number): string {
   const seconds = Math.max(0, Math.floor(ms / 1000));

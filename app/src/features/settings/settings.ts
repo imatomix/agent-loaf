@@ -1,9 +1,9 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { ICON_DELETE, ICON_REPLAY, ICON_SETTINGS } from "./icons";
-import { t } from "./i18n";
-import type { ConfigDirView, Preferences, SetupView, Status, UpdateState } from "./types";
+import { ICON_DELETE, ICON_REPLAY, ICON_SETTINGS } from "../../lib/icons";
+import { t } from "../../lib/i18n";
+import type { ConfigDirView, Preferences, SetupView, Status, UpdateState } from "../../lib/types";
 
 // 実行中は頻繁に変わり通知が多すぎるので選ばせない。以前の設定で選ばれていた場合は、保存し直しても消さずに残す
 const NOTIFIABLE: Status[] = ["needs_action", "error", "done"];

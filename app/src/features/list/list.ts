@@ -4,11 +4,11 @@ import { LogicalSize } from "@tauri-apps/api/dpi";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { setupDrag } from "./drag";
 import { formatElapsed } from "./format";
-import { setupClaudeSection, setupSettingsMenu, setupUpdateSection } from "./settings";
-import { applyStaticTexts, loadMessages, t } from "./i18n";
-import claudeCodeIcon from "./assets/claude-code.svg";
-import codexIcon from "./assets/codex.svg";
-import type { Agent, SessionView, Status } from "./types";
+import { setupClaudeSection, setupSettingsMenu, setupUpdateSection } from "../settings/settings";
+import { applyStaticTexts, loadMessages, t } from "../../lib/i18n";
+import claudeCodeIcon from "../../assets/claude-code.svg";
+import codexIcon from "../../assets/codex.svg";
+import type { Agent, SessionView, Status } from "../../lib/types";
 
 type Page = "agents" | "unknown" | "menu";
 

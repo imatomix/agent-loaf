@@ -1,3 +1,5 @@
+pub mod icon;
+
 use std::sync::atomic::Ordering;
 
 use agent_loaf_core::base::paths;
@@ -5,9 +7,9 @@ use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}
 use tauri::{App, AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, WindowEvent};
 use tauri_plugin_positioner::{Position, WindowExt};
 
-use crate::monitor::AppState;
-use crate::sync::LockExt;
-use crate::tray_icon::tray_icon;
+use crate::base::sync::LockExt;
+use crate::session::monitor::AppState;
+use crate::tray::icon::tray_icon;
 
 pub const TRAY_ID: &str = "main";
 // 一覧が開いているときにアイコンを押すと、フォーカス喪失で閉じた直後にクリックで再び開いてしまうため
@@ -113,7 +115,7 @@ pub fn show_list(app: &AppHandle) {
     set_list_open(app, true);
     // 開いた直後に状態不明の行を出すため、全プロセスを 1 回読む。メインスレッドを止めないよう別のスレッドで
     let handle = app.clone();
-    std::thread::spawn(move || crate::monitor::check_processes_now(&handle));
+    std::thread::spawn(move || crate::session::monitor::check_processes_now(&handle));
 }
 
 // 移動できなかったときは、一覧を開いてその行の詳細を出す。画面がまだ読み込み中なら、読み込みの後に受け取る

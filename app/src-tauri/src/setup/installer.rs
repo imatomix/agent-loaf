@@ -25,9 +25,9 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
-use crate::monitor::AppState;
-use crate::notifier;
-use crate::sync::LockExt;
+use crate::base::sync::LockExt;
+use crate::session::monitor::AppState;
+use crate::session::notifier;
 
 pub enum Job {
     Startup,
@@ -140,7 +140,7 @@ fn run(app: AppHandle, receiver: Receiver<Job>) {
         }
         publish(&app);
         // 監視の対象が変わると、一覧・メニューバーのアイコンに出すセッションも変わる
-        crate::monitor::publish(&app);
+        crate::session::monitor::publish(&app);
     }
 }
 

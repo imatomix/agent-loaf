@@ -4,10 +4,10 @@ use tauri::image::Image;
 // Figma の MenuBarIcon（18pt 四方）を scripts/make-tray-icons.sh で 36px にしたもの。
 // macOS のメニューバーは画像の高さを 18pt に合わせて縮めるので、Retina で 1:1 になる。
 // テンプレート画像として macOS が透明度だけを見て白か黒で塗るので、色は何でもよい
-const DEFAULT: &[u8] = include_bytes!("../icons/tray/default.png");
-const ERROR: &[u8] = include_bytes!("../icons/tray/error.png");
-const RUNNING: &[u8] = include_bytes!("../icons/tray/play.png");
-const NEEDS_ACTION: &[u8] = include_bytes!("../icons/tray/required.png");
+const DEFAULT: &[u8] = include_bytes!("../../icons/tray/default.png");
+const ERROR: &[u8] = include_bytes!("../../icons/tray/error.png");
+const RUNNING: &[u8] = include_bytes!("../../icons/tray/play.png");
+const NEEDS_ACTION: &[u8] = include_bytes!("../../icons/tray/required.png");
 
 pub fn tray_icon(status: Option<Status>) -> Image<'static> {
     let png = match status {

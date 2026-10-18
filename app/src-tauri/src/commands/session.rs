@@ -6,12 +6,12 @@ use agent_loaf_core::session::view::SessionView;
 use agent_loaf_core::base::messages::{self, Msg};
 use tauri::{AppHandle, State};
 
-use crate::monitor::AppState;
-use crate::sync::LockExt;
+use crate::base::sync::LockExt;
+use crate::session::monitor::AppState;
 
 #[tauri::command]
 pub fn get_sessions(state: State<'_, AppState>) -> Vec<SessionView> {
-    crate::monitor::current_views(&state)
+    crate::session::monitor::current_views(&state)
 }
 
 #[tauri::command]
@@ -29,7 +29,7 @@ pub fn move_session(
             .map_err(|error| messages::format(state.lang, Msg::ErrorSaveOrder, &[("error", &error.to_string())]))?;
         *settings = updated;
     }
-    crate::monitor::publish(&app);
+    crate::session::monitor::publish(&app);
     Ok(())
 }
 
@@ -38,7 +38,7 @@ pub fn move_session(
 pub async fn jump_session(app: AppHandle, id: String) {
     let _ = tauri::async_runtime::spawn_blocking(move || {
         // 移動の前に一覧は閉じているので、詳細を出すのは画面ではなくこちらで行う
-        if !crate::jumper::jump(&app, &id) {
+        if !crate::process::jumper::jump(&app, &id) {
             crate::tray::show_details(&app, &id);
         }
     })

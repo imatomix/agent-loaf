@@ -7,8 +7,8 @@ use agent_loaf_core::process::procinfo::ancestor_rows;
 use agent_loaf_core::setup::claude_cli::run_command;
 use tauri::{AppHandle, Manager};
 
-use crate::monitor::AppState;
-use crate::sync::LockExt;
+use crate::base::sync::LockExt;
+use crate::session::monitor::AppState;
 
 const OPEN_TIMEOUT: Duration = Duration::from_secs(5);
 

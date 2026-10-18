@@ -6,10 +6,10 @@ use agent_loaf_core::base::messages::{self, Msg};
 use tauri::{AppHandle, State};
 use tauri_plugin_autostart::ManagerExt;
 
-use crate::installer;
-use crate::monitor::AppState;
-use crate::notifier;
-use crate::sync::LockExt;
+use crate::base::sync::LockExt;
+use crate::session::monitor::AppState;
+use crate::session::notifier;
+use crate::setup::installer;
 
 #[tauri::command]
 pub fn get_settings(state: State<'_, AppState>) -> Preferences {

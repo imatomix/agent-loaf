@@ -1,13 +1,10 @@
+mod base;
 mod commands;
-mod installer;
-mod jumper;
-mod lang;
-mod monitor;
-mod notifier;
-mod sync;
+mod process;
+mod session;
+mod setup;
 mod tray;
-mod tray_icon;
-mod updater;
+mod update;
 
 use agent_loaf_core::base::crash_log;
 use agent_loaf_core::base::paths;
@@ -26,20 +23,20 @@ pub fn run() {
     {
         eprintln!("failed to create {}: {error}", home.display());
     }
-    monitor::install_bundled_hook(&home);
+    session::monitor::install_bundled_hook(&home);
 
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None));
     // 更新のプラグインは、設定に公開鍵がないと起動できない。開発のビルドでは登録しない
-    if updater::ENABLED {
+    if update::updater::ENABLED {
         builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
     }
     builder
-        .manage(updater::UpdaterState::default())
-        .manage(monitor::load_state(home))
-        .manage(installer::InstallerState::default())
+        .manage(update::updater::UpdaterState::default())
+        .manage(session::monitor::load_state(home))
+        .manage(setup::installer::InstallerState::default())
         .invoke_handler(tauri::generate_handler![
             commands::session::get_sessions,
             commands::settings::get_settings,
@@ -72,21 +69,21 @@ pub fn run() {
             tray::setup_windows(app);
             let handle = app.handle().clone();
             let on_open_handle = app.handle().clone();
-            notifier::init(
-                move || installer::publish(&handle),
+            session::notifier::init(
+                move || setup::installer::publish(&handle),
                 move |session_id| {
                     let app = on_open_handle.clone();
                     // 通知の処理は macOS のスレッドで呼ばれるので、ps や open は別のスレッドで動かす
                     std::thread::spawn(move || {
-                        if !jumper::jump(&app, &session_id) {
+                        if !process::jumper::jump(&app, &session_id) {
                             tray::show_details(&app, &session_id);
                         }
                     });
                 },
             );
-            monitor::publish(app.handle());
-            monitor::spawn(app.handle().clone());
-            installer::spawn(app.handle().clone());
+            session::monitor::publish(app.handle());
+            session::monitor::spawn(app.handle().clone());
+            setup::installer::spawn(app.handle().clone());
             Ok(())
         })
         .build(tauri::generate_context!())

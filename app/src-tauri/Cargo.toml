@@ -4,6 +4,9 @@ version.workspace = true
 edition = "2021"
 license = "MIT"
 
+[lib]
+name = "agent_loaf_app_lib"
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 

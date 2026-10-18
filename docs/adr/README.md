@@ -28,3 +28,4 @@
 - [0007. 版と配布](./0007-versioning-and-distribution.md)
 - [0008. AI で開発する進め方](./0008-ai-assisted-development.md)
 - [0009. 一覧の画面は閉じても捨てずに隠す](./0009-keep-list-window.md)
+- [0010. ディレクトリ構成](./0010-directory-layout.md)

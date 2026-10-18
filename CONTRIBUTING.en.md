@@ -5,7 +5,7 @@
 ## Requirements
 
 - macOS 14 or later (Apple Silicon)
-- Rust (stable)
+- Rust (via rustup. The version is pinned in `rust-toolchain.toml` and is installed automatically when you run `cargo`)
 - Node.js 22
 
 ## Getting started

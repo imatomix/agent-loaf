@@ -5,7 +5,7 @@
 ## 必要なもの
 
 - macOS 14 以降（Apple Silicon）
-- Rust（stable）
+- Rust（rustup。版はリポジトリの `rust-toolchain.toml` で決めてあり、`cargo` を使うと自動で入る）
 - Node.js 22
 
 ## 始め方

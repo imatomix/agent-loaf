@@ -10,10 +10,29 @@ fn json_version(path: &Path) -> String {
 }
 
 fn inherits_workspace_version(path: &Path) -> bool {
-    fs::read_to_string(path)
-        .unwrap()
-        .lines()
-        .any(|line| line.trim() == "version.workspace = true")
+    package_inherits_workspace_version(&fs::read_to_string(path).unwrap())
+}
+
+// toml のライブラリを足さないため、見出しの行で [package] の中かどうかを追う
+fn package_inherits_workspace_version(cargo_toml: &str) -> bool {
+    let mut in_package = false;
+    cargo_toml.lines().map(str::trim).any(|line| {
+        if line.starts_with('[') {
+            in_package = line == "[package]";
+            return false;
+        }
+        in_package && line == "version.workspace = true"
+    })
+}
+
+#[test]
+fn workspace_version_counts_only_inside_the_package_section() {
+    assert!(package_inherits_workspace_version(
+        "[package]\nname = \"a\"\nversion.workspace = true\n\n[dependencies]\nserde = \"1\"\n"
+    ));
+    assert!(!package_inherits_workspace_version(
+        "[package]\nname = \"a\"\nversion = \"0.1.0\"\n\n[dependencies.b]\nversion.workspace = true\n"
+    ));
 }
 
 // プラグインの版が変わらないと、入れてあるプラグインは更新されず、hooks.json の変更が利用者に届かない

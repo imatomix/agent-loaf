@@ -155,7 +155,7 @@ cd app && npm install && npm run tauri dev
 構成（中の決まりは、それぞれの入り口の README と `docs/adr/0010-directory-layout.md`）:
 
 ```
-agents-monitor/
+agent-loaf/
   app/                 画面とアプリ（Tauri の 1 つのアプリ）
     src/               画面（features/・lib/）
     src-tauri/src/     OS とのつなぎ（commands/・session/・setup/・process/・update/・tray/・base/）

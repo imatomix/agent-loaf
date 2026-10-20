@@ -155,7 +155,7 @@ cd app && npm install && npm run tauri dev
 Layout (each folder's README and `docs/adr/0010-directory-layout.md` describe what goes where, in Japanese):
 
 ```
-agents-monitor/
+agent-loaf/
   app/                 Screens and the app (one Tauri app)
     src/               Screens (features/, lib/)
     src-tauri/src/     OS integration (commands/, session/, setup/, process/, update/, tray/, base/)

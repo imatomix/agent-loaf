@@ -9,7 +9,7 @@ Claude Code と Codex の会話（セッション）の状態を、macOS のメ�
 ## 構成
 
 ```
-agents-monitor/
+agent-loaf/
   app/                 画面とアプリ（Tauri の 1 つのアプリ）
     src/               画面（features/・lib/）
     src-tauri/src/     OS とのつなぎ（commands/・session/・setup/・process/・update/・tray/・base/）
